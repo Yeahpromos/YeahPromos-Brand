@@ -76,7 +76,7 @@
 | page10_ad5a9526.jpeg | 选择 Profile；字段含 Profile ID、国家代码、名称 | 授权变体 B：Profile 选择 | ONB-04 |
 | page11_cadfa893.jpeg | 选择 Amazon Home Page；店铺名、页面 URL、页面名 | 授权变体 B：Storefront/Homepage 选择 | ONB-04 |
 | page11_a4601ceb.jpeg | 产品库空状态；可用性/类目/搜索、Amazon 筛选规则、上传历史、添加产品、列表/网格 | 产品库结构、筛选、空状态和来源入口 | AST-01/02 |
-| page12_49377b86.jpeg | 店铺、白名单、ASIN 标签输入；10 位字母数字、分隔符、Enter 验证、每日自动更新、保存 | Amazon 名单规则、校验和同步频率 | AST-02 |
+| page12_49377b86.jpeg | 店铺、白名单、ASIN 标签输入；以 B 开头的 10 位字母数字、分隔符、Enter 验证、每日自动更新、保存 | Amazon 名单规则、校验和同步频率 | AST-02 |
 | page13_a8ef4e46.jpeg | 产品列表字段；说明 Amazon 商品须通过筛选规则增减 ASIN，不要直接手工维护 | 产品来源权威和禁止错误路径 | AST-01/02 |
 | page13_2938db02.jpeg | Payments 列表、余额、充值、日期/方式/类型/状态/品牌/ID 筛选和账单字段 | 财务列表和充值入口 | FIN-01 |
 | page14_8869e530.jpeg | 输入充值金额并下一步 | 充值金额步骤 | FIN-01 |
