@@ -7,7 +7,7 @@ import {
   selectDemoState,
   selectPeriod,
   toggleNavigationGroup,
-} from '../app-core.mjs';
+} from '../app-core.js';
 
 const fixture = {
   periods: [

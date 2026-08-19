@@ -1,11 +1,11 @@
-import { apiCredentialsPageData, attributionPageData, bannersImagesPageData, brandIntegrationPageData, campaignPageData, commissionInvoicesPageData, commissionRulesPageData, couponAttributionPageData, couponsPageData, dashboardData, financeBalancePageData, helpCenterPageData, messagesPageData, ppcPageData, recruitmentPageSettingsData, restrictionRulesPageData, teamAccountsPageData, transactionHistoryPageData } from './data.mjs?v=merchant-reference-25';
+import { apiCredentialsPageData, attributionPageData, bannersImagesPageData, brandIntegrationPageData, campaignPageData, commissionInvoicesPageData, commissionRulesPageData, couponAttributionPageData, couponsPageData, dashboardData, financeBalancePageData, helpCenterPageData, messagesPageData, ppcPageData, recruitmentPageSettingsData, restrictionRulesPageData, teamAccountsPageData, transactionHistoryPageData } from './data.js?v=merchant-reference-25';
 import {
   createDashboardState,
   isNavigationItemActive,
   selectDemoState,
   selectPeriod,
   toggleNavigationGroup,
-} from './app-core.mjs?v=merchant-reference-18';
+} from './app-core.js?v=merchant-reference-18';
 import {
   applyRecruitmentAction,
   clearRecruitmentCriterion,
@@ -26,7 +26,7 @@ import {
   updateRecruitmentGroup,
   updateRecruitmentFilter,
   updateRecruitmentSearch,
-} from './recruitment.mjs?v=merchant-reference-22';
+} from './recruitment.js?v=merchant-reference-22';
 import {
   buildSmoothChartPath,
   createOverviewState,
@@ -36,7 +36,7 @@ import {
   overviewData,
   selectOverviewCadence,
   selectOverviewMetric,
-} from './overview.mjs';
+} from './overview.js';
 import {
   affiliateProgramRecords,
   createOperationsState,
@@ -50,8 +50,8 @@ import {
   toggleOperationsFilters,
   updateOperationsFilter,
   updateOperationsSearch,
-} from './operations.mjs?v=merchant-reference-26';
-import { renderOperationsPage } from './operations-renderers.mjs?v=merchant-reference-26';
+} from './operations.js?v=merchant-reference-26';
+import { renderOperationsPage } from './operations-renderers.js?v=merchant-reference-26';
 import {
   applyLocale,
   bindLanguageToggle,
@@ -59,13 +59,13 @@ import {
   translate,
   translateNavigationLabel,
   translatePageTitle,
-} from './localization.mjs';
+} from './localization.js';
 import {
   closeHeaderActionPanel,
   createHeaderActionState,
   markHeaderNotificationsRead,
   toggleHeaderActionPanel,
-} from './header-actions.mjs?v=merchant-reference-26';
+} from './header-actions.js?v=merchant-reference-26';
 import {
   createTargetState,
   getTargetPage,
@@ -79,8 +79,8 @@ import {
   updateTargetFilter,
   updateTargetSearch,
   influencerCampaignRecords as targetInfluencerCampaignRecords,
-} from './settings-influencer.mjs?v=merchant-reference-26';
-import { renderTargetPage } from './settings-influencer-renderers.mjs?v=merchant-reference-26';
+} from './settings-influencer.js?v=merchant-reference-26';
+import { renderTargetPage } from './settings-influencer-renderers.js?v=merchant-reference-26';
 
 let state = createDashboardState(dashboardData);
 let recruitmentState = createRecruitmentState();

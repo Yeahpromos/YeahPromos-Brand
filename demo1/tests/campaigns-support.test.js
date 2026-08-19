@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as operations from '../operations.mjs';
-import { renderOperationsPage } from '../operations-renderers.mjs';
+import * as operations from '../operations.js';
+import { renderOperationsPage } from '../operations-renderers.js';
 
 test('Campaigns 子页面挂载到现有模块路由并保留页面标题契约', () => {
   assert.equal(operations.getOperationsPage('affiliate-programs').parent, 'Campaigns');

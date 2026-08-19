@@ -9,8 +9,8 @@ import {
   targetPages,
   toggleTargetPreference,
   updateTargetFilter,
-} from '../settings-influencer.mjs';
-import { renderTargetPage } from '../settings-influencer-renderers.mjs';
+} from '../settings-influencer.js';
+import { renderTargetPage } from '../settings-influencer-renderers.js';
 
 const demoDirectory = resolve(import.meta.dirname, '..');
 const icon = (name) => `<svg data-icon="${name}"></svg>`;

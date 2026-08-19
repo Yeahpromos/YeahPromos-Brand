@@ -1,4 +1,4 @@
-import { buildSmoothChartPath } from './overview.mjs';
+import { buildSmoothChartPath } from './overview.js';
 import {
   amazonCampaignRecords,
   affiliateProgramRecords,
@@ -10,7 +10,7 @@ import {
   performanceSeries,
   sortAffiliateProgramRecords,
   transactionRecords,
-} from './operations.mjs?v=merchant-reference-26';
+} from './operations.js?v=merchant-reference-26';
 
 const toneForStatus = (status) => {
   const normalized = String(status ?? '').toLowerCase();

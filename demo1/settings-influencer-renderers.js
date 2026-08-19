@@ -2,7 +2,7 @@ import {
   filterInfluencerCampaignRecords,
   influencerCampaignRecords,
   workspaceSettingsDefaults,
-} from './settings-influencer.mjs';
+} from './settings-influencer.js';
 
 const fallbackEscape = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
   '&': '&amp;',

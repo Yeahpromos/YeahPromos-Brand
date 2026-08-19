@@ -208,21 +208,21 @@ Demo 1 使用白、黑、红三色构成品牌视觉；旧蓝色不得继续作�
 | --- | --- |
 | `index.html` | Merchant 页面语义骨架、SVG 图标库、抽屉、状态选择器、活动页、归因规则页、Coupon attribution、佣金规则页、Restriction rules、PPC、发票页、财务页、Transaction history、Help center、Team accounts、Recruitment page、Brand integration、API credentials、Messages & Notifications、Coupons 和 Products & Assets 页面 |
 | `styles.css` | 视觉 Token、布局、组件、状态、动效和响应式样式 |
-| `data.mjs` | 工作区、任务导航、时间范围快照、指标、伙伴、活动、归因规则、Coupon attribution、佣金规则、Restriction rules、PPC、发票、财务、Transaction history、Help center、Team accounts、Recruitment page、Brand integration、API credentials、Messages & Notifications、Coupons 和 Banners & images 模拟数据 |
-| `app-core.mjs` | 不依赖 DOM 的状态函数 |
+| `data.js` | 工作区、任务导航、时间范围快照、指标、伙伴、活动、归因规则、Coupon attribution、佣金规则、Restriction rules、PPC、发票、财务、Transaction history、Help center、Team accounts、Recruitment page、Brand integration、API credentials、Messages & Notifications、Coupons 和 Banners & images 模拟数据 |
+| `app-core.js` | 不依赖 DOM 的状态函数 |
 | `app.js` | 数据渲染、模块导航、活动筛选、归因模型交互、Coupon attribution 搜索/筛选/选择/优先级详情交互、佣金规则筛选/详情交互、Restriction rules 与 PPC 的筛选/选择/详情交互、发票筛选/下载交互、财务趋势/付款交互、Transaction history 搜索/筛选/选择/商品展开/批量操作/导出/分页交互、Help center 搜索/文章交互、Team accounts 搜索/筛选/邀请/编辑/停用/分页交互、Recruitment page 启停/品牌/队列/文案/申请字段/预览交互、Brand integration 集成管理/重连/活动交互、API credentials 环境/筛选/复制/轮换交互、Messages & Notifications 标签/搜索/回复/伙伴交互、Coupons 日期/筛选/搜索/选择交互、Banners & images 分类/筛选/搜索/详情交互、状态切换、抽屉和浏览器交互 |
-| `tests/app-core.test.mjs` | 时间范围、导航展开和 Demo 状态行为测试 |
-| `tests/structure.test.mjs` | Merchant 结构、字体、响应式和无障碍规则测试 |
+| `tests/app-core.test.js` | 时间范围、导航展开和 Demo 状态行为测试 |
+| `tests/structure.test.js` | Merchant 结构、字体、响应式和无障碍规则测试 |
 
 ## 自动化检查
 
 在仓库根目录运行：
 
 ```powershell
-node --test .\demo1\tests\*.test.mjs
+node --test .\demo1\tests\*.test.js
 node --check .\demo1\app.js
-node --check .\demo1\data.mjs
-node --check .\demo1\app-core.mjs
+node --check .\demo1\data.js
+node --check .\demo1\app-core.js
 ```
 
 ## 迁移到 Vue

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createOperationsState, filterOperationsRecords, getOperationsPage, operationsPageIds, selectOperationsRecord, selectOperationsTab, updateOperationsFilter, updateOperationsSearch } from '../operations.mjs';
+import { createOperationsState, filterOperationsRecords, getOperationsPage, operationsPageIds, selectOperationsRecord, selectOperationsTab, updateOperationsFilter, updateOperationsSearch } from '../operations.js';
 
 test('data and transactions exposes its four routed workspace pages', () => {
   assert.deepEqual(operationsPageIds, ['performance', 'performance-brand', 'transactions', 'amazon-brb', 'affiliate-programs', 'influencer-campaigns']);

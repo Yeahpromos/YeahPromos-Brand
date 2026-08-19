@@ -10,8 +10,8 @@ const demoDirectory = resolve(currentDirectory, '..');
 const html = readFileSync(resolve(demoDirectory, 'index.html'), 'utf8');
 const css = readFileSync(resolve(demoDirectory, 'styles.css'), 'utf8');
 const appJs = readFileSync(resolve(demoDirectory, 'app.js'), 'utf8');
-const operationsRenderers = readFileSync(resolve(demoDirectory, 'operations-renderers.mjs'), 'utf8');
-const data = readFileSync(resolve(demoDirectory, 'data.mjs'), 'utf8');
+const operationsRenderers = readFileSync(resolve(demoDirectory, 'operations-renderers.js'), 'utf8');
+const data = readFileSync(resolve(demoDirectory, 'data.js'), 'utf8');
 const readme = readFileSync(resolve(demoDirectory, 'README.md'), 'utf8');
 const latestPreview = readFileSync(resolve(demoDirectory, 'latest.html'), 'utf8');
 
@@ -77,7 +77,7 @@ test('app entry remains syntactically valid after conflict resolution', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-26"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-27"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
   assert.match(html, /data-module-page/);
@@ -572,7 +572,7 @@ test('finance neutral text uses contrast-ready dark gray tokens', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-26"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-27"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
 });
@@ -611,8 +611,8 @@ test('overview follows the reference dashboard hierarchy', () => {
 });
 
 test('preview busts the entry cache for the reference dashboard skin', () => {
-  assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-26"/);
-  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-26"/);
+  assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-30"/);
+  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-27"/);
 });
 
 test('latest preview resolves main to an immutable RawGitHack commit URL', () => {

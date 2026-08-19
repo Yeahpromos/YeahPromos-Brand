@@ -4,7 +4,7 @@ import {
   createHeaderActionState,
   markHeaderNotificationsRead,
   toggleHeaderActionPanel,
-} from '../header-actions.mjs';
+} from '../header-actions.js';
 
 test('message and notification buttons toggle one popover at a time', () => {
   const source = createHeaderActionState();

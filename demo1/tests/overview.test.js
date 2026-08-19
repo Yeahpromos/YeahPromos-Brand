@@ -8,7 +8,7 @@ import {
   overviewChartTabs,
   overviewMetricIds,
   selectOverviewMetric,
-} from '../overview.mjs';
+} from '../overview.js';
 
 test('overview exposes the five reference metrics and four chart views', () => {
   assert.deepEqual(overviewMetricIds, ['clicks', 'conversions', 'gross-sales', 'commission', 'pending-payout']);

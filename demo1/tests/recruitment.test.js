@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import * as recruitment from '../recruitment.mjs';
+import * as recruitment from '../recruitment.js';
 
 import {
   applyRecruitmentAction,
@@ -17,7 +17,7 @@ import {
   setRecruitmentInvitePage,
   toggleRecruitmentMessage,
   updateRecruitmentGroup,
-} from '../recruitment.mjs';
+} from '../recruitment.js';
 
 test('recruitment group exposes the five navigable page contracts', () => {
   assert.deepEqual(recruitmentPageIds, [
