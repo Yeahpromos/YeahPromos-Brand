@@ -4320,6 +4320,22 @@ const renderActiveTargetPage = (pageId = getActiveTargetPageId()) => {
   if (isActiveTargetPage(pageId)) renderTargetWorkspace(pageId);
 };
 
+const syncSelectedRecordCards = (selector, dataKey, selectedId) => {
+  modulePage.querySelectorAll(selector).forEach((card) => {
+    card.classList.toggle('is-selected', card.dataset[dataKey] === selectedId);
+  });
+};
+
+const syncRecruitmentInviteButton = (recordId) => {
+  const inviteButton = [...modulePage.querySelectorAll('[data-recruitment-action="invite"]')]
+    .find((button) => button.dataset.recordId === recordId);
+  if (!inviteButton) return;
+
+  inviteButton.classList.add('is-complete');
+  inviteButton.setAttribute('aria-pressed', 'true');
+  inviteButton.innerHTML = `${icon('check')} Invited`;
+};
+
 const getTargetRecordById = (recordId) => targetInfluencerCampaignRecords.find((record) => record.id === recordId);
 
 const getRecruitmentRecordById = (recordId) => [
@@ -4377,7 +4393,7 @@ const handleRecruitmentAction = (action, trigger) => {
 
   if (actionId === 'invite') {
     recruitmentState = record ? applyRecruitmentAction(recruitmentState, 'invite', record.id) : recruitmentState;
-    if (record) renderRecruitmentPage(pageId);
+    if (record) syncRecruitmentInviteButton(record.id);
     openRecruitmentDrawer(record ?? { id: 'invite-composer', name: 'New partner', initial: '+', type: 'Partner' }, action, 'invite');
     return;
   }
@@ -4582,9 +4598,8 @@ modulePage.addEventListener('click', (event) => {
     if (actionId === 'view-influencer-campaign') {
       const record = getTargetRecordById(targetAction.dataset.targetRecordId);
       targetState = selectTargetRecord(targetState, pageId, targetAction.dataset.targetRecordId);
-      renderActiveTargetPage(pageId);
-      const trigger = modulePage.querySelector(`[data-target-action="view-influencer-campaign"][data-target-record-id="${targetAction.dataset.targetRecordId}"]`);
-      openTargetInfluencerDrawer(record, trigger);
+      syncSelectedRecordCards('.target-influencer-card[data-target-record-id]', 'targetRecordId', targetState[getTargetStateKey(pageId)]?.selectedId);
+      openTargetInfluencerDrawer(record, targetAction);
       return;
     }
     if (actionId === 'create-influencer-campaign') {
@@ -4649,7 +4664,7 @@ modulePage.addEventListener('click', (event) => {
 
     if ((actionId === 'view-program' || actionId === 'view-campaign') && campaignSupportAction.dataset.campaignSupportRecordId && (pageId === 'affiliate-programs' || pageId === 'influencer-campaigns')) {
       operationsState = selectOperationsRecord(operationsState, pageId, campaignSupportAction.dataset.campaignSupportRecordId);
-      renderWorkspacePage(pageId);
+      syncSelectedRecordCards('[data-campaign-support-card][data-campaign-support-record-id]', 'campaignSupportRecordId', operationsState[getOperationsStateKey(pageId)]?.selectedId);
       openCampaignSupportDrawer(pageId, campaignSupportAction.dataset.campaignSupportRecordId, campaignSupportAction);
       return;
     }

@@ -77,7 +77,7 @@ test('app entry remains syntactically valid after conflict resolution', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-29"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-30"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
   assert.match(html, /data-module-page/);
@@ -572,7 +572,7 @@ test('finance neutral text uses contrast-ready dark gray tokens', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-29"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-30"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
 });
@@ -586,7 +586,7 @@ test('recruitment search exposes an explicit submit and clear interaction', () =
 test('recruitment invite updates the visible card before opening the composer', () => {
   assert.match(appJs, /if \(actionId === 'invite'\) \{/);
   assert.match(appJs, /recruitmentState = record \? applyRecruitmentAction\(recruitmentState, 'invite', record\.id\) : recruitmentState;/);
-  assert.match(appJs, /if \(record\) renderRecruitmentPage\(pageId\);/);
+  assert.match(appJs, /if \(record\) syncRecruitmentInviteButton\(record\.id\);/);
   assert.match(appJs, /openRecruitmentDrawer\(record \?\? \{ id: 'invite-composer'/);
 });
 
@@ -623,7 +623,7 @@ test('overview interaction surfaces expose staged motion and chart point inspect
 
 test('preview busts the entry cache for the reference dashboard skin', () => {
   assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-32"/);
-  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-29"/);
+  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-30"/);
 });
 
 test('latest preview resolves main to an immutable RawGitHack commit URL', () => {
@@ -720,4 +720,27 @@ test('Campaigns 子页面保留筛选、选中态和详情抽屉交互契约', (
   assert.match(css, /\.program-card\.is-selected/);
   assert.match(css, /\.influencer-card\.is-selected/);
   assert.match(css, /@keyframes campaign-support-card-reveal/);
+});
+
+test('打开详情抽屉时只同步选中卡片，不重绘父页面', () => {
+  const targetDrawerBranch = appJs.slice(
+    appJs.indexOf("if (actionId === 'view-influencer-campaign')"),
+    appJs.indexOf("if (actionId === 'create-influencer-campaign')"),
+  );
+  const campaignSupportBranchStart = appJs.indexOf("if ((actionId === 'view-program' || actionId === 'view-campaign')");
+  const campaignSupportDrawerBranch = appJs.slice(
+    campaignSupportBranchStart,
+    appJs.indexOf('const messages = {', campaignSupportBranchStart),
+  );
+  const recruitmentInviteBranch = appJs.slice(
+    appJs.indexOf("if (actionId === 'invite')"),
+    appJs.indexOf("if (actionId === 'follow')"),
+  );
+
+  assert.doesNotMatch(targetDrawerBranch, /renderActiveTargetPage\(pageId\)/);
+  assert.doesNotMatch(campaignSupportDrawerBranch, /renderWorkspacePage\(pageId\)/);
+  assert.doesNotMatch(recruitmentInviteBranch, /renderRecruitmentPage\(pageId\)/);
+  assert.match(targetDrawerBranch, /syncSelectedRecordCards/);
+  assert.match(campaignSupportDrawerBranch, /syncSelectedRecordCards/);
+  assert.match(recruitmentInviteBranch, /syncRecruitmentInviteButton/);
 });
