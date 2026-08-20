@@ -32,10 +32,12 @@ import {
   createOverviewState,
   getOverviewChart,
   getOverviewSnapshot,
+  getOverviewPointSummary,
   overviewChartTabs,
   overviewData,
   selectOverviewCadence,
   selectOverviewMetric,
+  selectOverviewPoint,
 } from './overview.js';
 import {
   affiliateProgramRecords,
@@ -756,6 +758,78 @@ const formatOverviewChartValue = (value, metricId) => {
   return `${prefix}${Math.round(value)}`;
 };
 
+const replayOverviewChartTransition = (chartSurface) => {
+  if (!chartSurface) return;
+  chartSurface.classList.remove('overview-chart--transitioning');
+  requestAnimationFrame(() => chartSurface.classList.add('overview-chart--transitioning'));
+};
+
+const showOverviewPointTooltip = (pointTrigger) => {
+  const chartSurface = pointTrigger?.closest('[data-overview-chart]');
+  const tooltip = chartSurface?.querySelector('[data-overview-chart-tooltip]');
+  const svg = chartSurface?.querySelector('[data-overview-chart-svg]');
+  const circle = pointTrigger?.querySelector('circle');
+  const pointIndex = Number(pointTrigger?.dataset.overviewChartPoint);
+  const summary = Number.isInteger(pointIndex)
+    ? getOverviewPointSummary(selectOverviewPoint(overviewState, pointIndex), state.selectedPeriod)
+    : null;
+
+  if (!chartSurface || !tooltip || !svg || !circle || !summary) return;
+
+  overviewState = selectOverviewPoint(overviewState, pointIndex);
+  tooltip.innerHTML = `
+    <span>${summary.metricLabel}</span>
+    <strong>${summary.display}</strong>
+    <small>${summary.label}</small>
+  `;
+  tooltip.hidden = false;
+  chartSurface.classList.add('has-chart-tooltip');
+
+  const svgRect = svg.getBoundingClientRect();
+  const viewBoxWidth = 720;
+  const viewBoxHeight = 220;
+  const pointX = Number(circle.getAttribute('cx')) / viewBoxWidth * svgRect.width;
+  const pointY = Number(circle.getAttribute('cy')) / viewBoxHeight * svgRect.height;
+  const tooltipWidth = tooltip.getBoundingClientRect().width || 112;
+  const horizontalInset = Math.min(tooltipWidth / 2 + 8, svgRect.width / 2);
+  const clampedX = Math.min(Math.max(pointX, horizontalInset), Math.max(horizontalInset, svgRect.width - horizontalInset));
+
+  tooltip.style.setProperty('--overview-tooltip-x', `${clampedX}px`);
+  tooltip.style.setProperty('--overview-tooltip-y', `${Math.max(pointY, 12)}px`);
+};
+
+const hideOverviewPointTooltip = (chartSurface) => {
+  const tooltip = chartSurface?.querySelector('[data-overview-chart-tooltip]');
+  if (!tooltip) return;
+
+  overviewState = selectOverviewPoint(overviewState, null);
+  tooltip.hidden = true;
+  chartSurface.classList.remove('has-chart-tooltip');
+};
+
+const setupOverviewMotion = () => {
+  if (!overviewPage) return;
+  overviewPage.classList.add('overview-motion-ready');
+
+  const revealNodes = [...overviewPage.querySelectorAll('[data-overview-reveal]')];
+  const revealNode = (node) => node.classList.add('is-visible');
+
+  if (!('IntersectionObserver' in window)) {
+    revealNodes.forEach(revealNode);
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      revealNode(entry.target);
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+
+  revealNodes.forEach((node) => observer.observe(node));
+};
+
 const renderOverviewChart = () => {
   const snapshot = getOverviewSnapshot(state.selectedPeriod);
   const chart = getOverviewChart(overviewState, state.selectedPeriod);
@@ -763,6 +837,9 @@ const renderOverviewChart = () => {
   const range = document.querySelector('[data-overview-chart-range]');
   const period = document.querySelector('[data-overview-chart-period]');
   const cadence = document.querySelector('[data-overview-chart-cadence]');
+  const chartSurface = document.querySelector('[data-overview-chart]');
+
+  overviewState = selectOverviewPoint(overviewState, null);
 
   if (tabs) {
     tabs.innerHTML = overviewChartTabs
@@ -779,7 +856,10 @@ const renderOverviewChart = () => {
   if (cadence) cadence.value = overviewState.cadence;
 
   if (state.demoState === 'empty') {
-    document.querySelector('[data-overview-chart]').innerHTML = '<div class="overview-chart__empty"><strong>No activity in this date range</strong><span>Try a wider date range to see performance trends.</span></div>';
+    if (chartSurface) {
+      chartSurface.innerHTML = '<div class="overview-chart__empty"><strong>No activity in this date range</strong><span>Try a wider date range to see performance trends.</span></div>';
+      replayOverviewChartTransition(chartSurface);
+    }
     return;
   }
 
@@ -802,16 +882,20 @@ const renderOverviewChart = () => {
     return `<g class="overview-chart__grid-line"><line x1="${plot.left}" y1="${y.toFixed(1)}" x2="${plot.width - plot.right}" y2="${y.toFixed(1)}"></line><text x="${plot.left - 10}" y="${(y + 3).toFixed(1)}" text-anchor="end">${formatOverviewChartValue(value, chart.metricId)}</text></g>`;
   }).join('');
 
-  document.querySelector('[data-overview-chart]').innerHTML = `
-    <svg viewBox="0 0 ${plot.width} ${plot.height}" preserveAspectRatio="none" aria-hidden="true">
+  if (!chartSurface) return;
+
+  chartSurface.innerHTML = `
+    <svg viewBox="0 0 ${plot.width} ${plot.height}" preserveAspectRatio="none" aria-label="${escapeHtml(chart.label)} trend" data-overview-chart-svg>
       ${gridLines}
       <path class="overview-chart__area" d="${areaPath}"></path>
       <path class="overview-chart__line" d="${linePath}"></path>
-      ${points.map((point) => `<g class="overview-chart__point"><circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="3.2"></circle><text x="${point.x.toFixed(1)}" y="${(point.y - 12).toFixed(1)}" text-anchor="middle">${point.display}</text></g>`).join('')}
+      ${points.map((point, index) => `<g class="overview-chart__point" data-overview-chart-point="${index}" tabindex="0" role="button" aria-label="${escapeHtml(`${chart.label}, ${point.label}: ${point.display}`)}"><circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="3.2"></circle><text x="${point.x.toFixed(1)}" y="${(point.y - 12).toFixed(1)}" text-anchor="middle">${point.display}</text></g>`).join('')}
       ${points.map((point) => `<text class="overview-chart__x-label" x="${point.x.toFixed(1)}" y="${plot.height - 12}" text-anchor="middle">${point.label}</text>`).join('')}
     </svg>
+    <div class="overview-chart__tooltip" data-overview-chart-tooltip hidden role="status" aria-live="polite"></div>
     <div class="overview-chart__legend"><i></i><span>${chart.label}</span></div>
   `;
+  replayOverviewChartTransition(chartSurface);
 };
 
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
@@ -4192,6 +4276,40 @@ overviewPage.addEventListener('change', (event) => {
   showToast(`${cadence.options[cadence.selectedIndex].textContent} interval selected`);
 });
 
+overviewPage.addEventListener('pointerover', (event) => {
+  const point = event.target instanceof Element
+    ? event.target.closest('[data-overview-chart-point]')
+    : null;
+  if (!point || !overviewPage.contains(point)) return;
+  if (event.relatedTarget instanceof Node && point.contains(event.relatedTarget)) return;
+  showOverviewPointTooltip(point);
+});
+
+overviewPage.addEventListener('pointerout', (event) => {
+  const point = event.target instanceof Element
+    ? event.target.closest('[data-overview-chart-point]')
+    : null;
+  if (!point || !overviewPage.contains(point)) return;
+  if (event.relatedTarget instanceof Node && point.contains(event.relatedTarget)) return;
+  hideOverviewPointTooltip(point.closest('[data-overview-chart]'));
+});
+
+overviewPage.addEventListener('focusin', (event) => {
+  const point = event.target instanceof Element
+    ? event.target.closest('[data-overview-chart-point]')
+    : null;
+  if (point && overviewPage.contains(point)) showOverviewPointTooltip(point);
+});
+
+overviewPage.addEventListener('focusout', (event) => {
+  const point = event.target instanceof Element
+    ? event.target.closest('[data-overview-chart-point]')
+    : null;
+  if (!point || !overviewPage.contains(point)) return;
+  if (event.relatedTarget instanceof Node && point.contains(event.relatedTarget)) return;
+  hideOverviewPointTooltip(point.closest('[data-overview-chart]'));
+});
+
 
 const getActiveRecruitmentPageId = () => state.activeNavigationChild ?? state.activeNavigationId;
 const getActiveOperationsPageId = () => state.activeNavigationChild ?? state.activeNavigationId;
@@ -5847,3 +5965,4 @@ document.querySelector('[data-toast-close]').addEventListener('click', () => {
 
 bindLanguageToggle();
 renderAll();
+setupOverviewMotion();

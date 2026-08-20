@@ -171,7 +171,7 @@ export const overviewData = {
 };
 
 export function createOverviewState() {
-  return { selectedMetric: 'clicks', cadence: 'daily' };
+  return { selectedMetric: 'clicks', cadence: 'daily', activeChartPoint: null };
 }
 
 export function selectOverviewMetric(state, metricId) {
@@ -184,6 +184,11 @@ export function selectOverviewCadence(state, cadence) {
   return { ...state, cadence };
 }
 
+export function selectOverviewPoint(state, pointIndex) {
+  if (pointIndex !== null && (!Number.isInteger(pointIndex) || pointIndex < 0)) return state;
+  return { ...state, activeChartPoint: pointIndex };
+}
+
 export function getOverviewSnapshot(periodId = '7d') {
   return snapshots[periodId] ?? snapshots['7d'];
 }
@@ -193,6 +198,23 @@ export function getOverviewChart(state, periodId = '7d') {
   const snapshot = getOverviewSnapshot(periodId);
   const chart = snapshot.chart[selectedMetric] ?? snapshot.chart.clicks;
   return { metricId: selectedMetric, ...chart };
+}
+
+export function getOverviewPointSummary(state, periodId = '7d') {
+  const pointIndex = state?.activeChartPoint;
+  if (!Number.isInteger(pointIndex) || pointIndex < 0) return null;
+
+  const chart = getOverviewChart(state, periodId);
+  const point = chart.points[pointIndex];
+  if (!point) return null;
+
+  return {
+    metricId: chart.metricId,
+    metricLabel: chart.label,
+    label: point.label,
+    display: point.display,
+    value: point.value,
+  };
 }
 
 export function buildSmoothChartPath(points) {

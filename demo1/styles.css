@@ -24341,3 +24341,245 @@ body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-child[data-nav-ch
     animation: none;
   }
 }
+
+/* Overview motion refinement: restrained spring feedback for the active workspace. */
+body {
+  --overview-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --overview-spring-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.overview-motion-ready [data-overview-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 760ms var(--overview-spring-soft), transform 760ms var(--overview-spring-soft);
+}
+
+.overview-motion-ready [data-overview-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.overview-motion-ready [data-overview-reveal="analytics"] {
+  transition-delay: 70ms;
+}
+
+.overview-motion-ready [data-overview-reveal="secondary"] {
+  transition-delay: 120ms;
+}
+
+.overview-motion-ready [data-overview-reveal="shortcuts"] {
+  transition-delay: 170ms;
+}
+
+.overview-metric-card {
+  transition: border-color 520ms var(--overview-spring), background-color 520ms var(--overview-spring), transform 520ms var(--overview-spring);
+}
+
+.overview-metric-card::before {
+  transform-origin: left center;
+  transition: transform 560ms var(--overview-spring);
+}
+
+.overview-metric-card:hover,
+.overview-metric-card:focus-visible {
+  transform: translateY(-2px);
+}
+
+.overview-metric-card:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.overview-metric-card:hover::before,
+.overview-metric-card.is-chart-selected::before,
+.overview-metric-card:focus-visible::before {
+  transform: scaleX(1.65);
+}
+
+.overview-chart-tab {
+  position: relative;
+  transition: background-color 480ms var(--overview-spring), color 480ms var(--overview-spring), transform 480ms var(--overview-spring);
+}
+
+.overview-chart-tab::after {
+  position: absolute;
+  right: 12px;
+  bottom: 4px;
+  left: 12px;
+  height: 1px;
+  border-radius: 999px;
+  background: var(--color-brand);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 500ms var(--overview-spring);
+}
+
+.overview-chart-tab.is-active::after {
+  transform: scaleX(1);
+}
+
+.overview-chart-tab:active {
+  transform: scale(0.96);
+}
+
+.overview-chart {
+  position: relative;
+}
+
+.overview-chart--transitioning > svg,
+.overview-chart--transitioning > .overview-chart__legend {
+  animation: overview-chart-surface 620ms var(--overview-spring-soft) both;
+}
+
+@keyframes overview-chart-surface {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.992);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.overview-chart__point {
+  cursor: crosshair;
+  outline: none;
+}
+
+.overview-chart__point circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 360ms var(--overview-spring), transform 520ms var(--overview-spring);
+}
+
+.overview-chart__point:hover circle,
+.overview-chart__point:focus-visible circle {
+  opacity: 1;
+  transform: scale(1.8);
+}
+
+.overview-chart__point:hover text,
+.overview-chart__point:focus-visible text {
+  fill: var(--color-text);
+}
+
+.overview-chart__tooltip {
+  position: absolute;
+  top: var(--overview-tooltip-y, 12px);
+  left: var(--overview-tooltip-x, 50%);
+  z-index: 1;
+  display: none;
+  min-width: 104px;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid rgb(17 17 17 / 10%);
+  border-radius: 8px;
+  background: rgb(17 17 17 / 94%);
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transform: translate(-50%, calc(-100% - 14px)) scale(0.94);
+  transform-origin: center bottom;
+  transition: opacity 260ms var(--overview-spring), transform 420ms var(--overview-spring);
+  white-space: nowrap;
+}
+
+.overview-chart__tooltip:not([hidden]) {
+  display: grid;
+  opacity: 1;
+  transform: translate(-50%, calc(-100% - 14px)) scale(1);
+}
+
+.overview-chart__tooltip span,
+.overview-chart__tooltip small {
+  color: rgb(255 255 255 / 68%);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.overview-chart__tooltip strong {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.overview-ranking-panel .ranking-row__name,
+.overview-action-panel .action-card__link,
+.overview-shortcuts-panel .quick-action,
+.overview-shortcuts-panel .quick-action > span {
+  transition: color 480ms var(--overview-spring), background-color 480ms var(--overview-spring), border-color 480ms var(--overview-spring), transform 520ms var(--overview-spring);
+}
+
+.overview-ranking-panel .ranking-row__name:hover,
+.overview-ranking-panel .ranking-row__name:focus-visible {
+  transform: translateX(3px);
+}
+
+.overview-ranking-panel .ranking-row__name:hover .ranking-row__avatar,
+.overview-ranking-panel .ranking-row__name:focus-visible .ranking-row__avatar {
+  transform: scale(1.08);
+}
+
+.overview-ranking-panel .ranking-row__avatar {
+  transition: transform 520ms var(--overview-spring);
+}
+
+.overview-action-panel .action-card__link {
+  transition: color 480ms var(--overview-spring), background-color 480ms var(--overview-spring), transform 520ms var(--overview-spring);
+}
+
+.overview-action-panel .action-card:hover .action-card__link,
+.overview-action-panel .action-card:focus-within .action-card__link {
+  transform: translateX(3px);
+}
+
+.overview-action-panel .action-card:hover .action-card__icon,
+.overview-action-panel .action-card:focus-within .action-card__icon {
+  transform: translateX(2px) scale(1.05);
+}
+
+.overview-action-panel .action-card__icon {
+  transition: transform 520ms var(--overview-spring);
+}
+
+.overview-shortcuts-panel .quick-action:hover,
+.overview-shortcuts-panel .quick-action:focus-visible {
+  transform: translateY(-2px);
+}
+
+.overview-shortcuts-panel .quick-action:hover > span,
+.overview-shortcuts-panel .quick-action:focus-visible > span {
+  transform: translateX(2px) scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overview-motion-ready [data-overview-reveal],
+  .overview-motion-ready [data-overview-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .overview-metric-card,
+  .overview-chart-tab,
+  .overview-chart-tab::after,
+  .overview-chart__point circle,
+  .overview-chart__tooltip,
+  .overview-ranking-panel .ranking-row__name,
+  .overview-ranking-panel .ranking-row__avatar,
+  .overview-action-panel .action-card__link,
+  .overview-action-panel .action-card__icon,
+  .overview-shortcuts-panel .quick-action,
+  .overview-shortcuts-panel .quick-action > span {
+    animation: none;
+    transition: none;
+  }
+
+  .overview-chart--transitioning > svg,
+  .overview-chart--transitioning > .overview-chart__legend {
+    animation: none;
+  }
+}

@@ -77,7 +77,7 @@ test('app entry remains syntactically valid after conflict resolution', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-27"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-29"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
   assert.match(html, /data-module-page/);
@@ -572,7 +572,7 @@ test('finance neutral text uses contrast-ready dark gray tokens', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-27"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-29"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
 });
@@ -610,9 +610,20 @@ test('overview follows the reference dashboard hierarchy', () => {
   assert.match(css, /\.overview-metric-card::before\s*\{/s);
 });
 
+test('overview interaction surfaces expose staged motion and chart point inspection', () => {
+  assert.match(html, /data-overview-reveal="metrics"/);
+  assert.match(html, /data-overview-reveal="analytics"/);
+  assert.match(appJs, /new IntersectionObserver/);
+  assert.match(appJs, /data-overview-chart-point/);
+  assert.match(appJs, /data-overview-chart-tooltip/);
+  assert.match(css, /--overview-spring:\s*cubic-bezier\(/);
+  assert.match(css, /\.overview-chart__tooltip\s*\{/);
+  assert.match(css, /\.overview-chart--transitioning/);
+});
+
 test('preview busts the entry cache for the reference dashboard skin', () => {
-  assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-30"/);
-  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-27"/);
+  assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-32"/);
+  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-29"/);
 });
 
 test('latest preview resolves main to an immutable RawGitHack commit URL', () => {
