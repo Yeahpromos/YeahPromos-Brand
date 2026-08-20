@@ -24218,3 +24218,42 @@ body.is-sidebar-collapsed .sidebar .nav-item:not(.is-active):hover::before {
   .target-tab,
   .target-settings-toggle i { transition: none; }
 }
+
+/* Keep PPC and Messages on the current sidebar treatment even when their
+   page-specific skins are present earlier in this stylesheet. */
+body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-item[data-nav-item="commission-rules"],
+body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-item[data-nav-item="messages"] {
+  background: var(--color-brand-soft);
+  box-shadow: none;
+  color: var(--color-text);
+}
+
+body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-item[data-nav-item="commission-rules"]:hover,
+body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-item[data-nav-item="messages"]:hover {
+  background: var(--color-brand-soft);
+  color: var(--color-text);
+}
+
+body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-item[data-nav-item="commission-rules"] .nav-item__label,
+body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-item[data-nav-item="messages"] .nav-item__label {
+  color: var(--color-text);
+}
+
+body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-item[data-nav-item="commission-rules"] :is(.nav-item__icon, .nav-item__chevron),
+body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-item[data-nav-item="messages"] :is(.nav-item__icon, .nav-item__chevron) {
+  color: var(--color-nav-selected);
+}
+
+body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-child[data-nav-child="ppc"].is-active,
+body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-child[data-nav-child="all-messages"].is-active {
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-nav-selected);
+  font-weight: 700;
+}
+
+body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-child[data-nav-child="ppc"].is-active::before,
+body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-child[data-nav-child="all-messages"].is-active::before {
+  border-color: var(--color-nav-selected);
+  background: var(--color-nav-selected);
+}

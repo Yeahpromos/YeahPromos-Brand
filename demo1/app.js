@@ -4155,6 +4155,16 @@ navigation.addEventListener('click', (event) => {
   if (!itemButton) return;
 
   if (groupButton) {
+    if (document.body.classList.contains('is-sidebar-collapsed')) {
+      const navigationItem = state.navigation.find((item) => item.id === groupButton.dataset.navGroup);
+      const firstChildId = navigationItem?.children?.[0]?.id;
+
+      if (firstChildId) {
+        navigateTo(firstChildId);
+        return;
+      }
+    }
+
     state = toggleNavigationGroup(state, groupButton.dataset.navGroup);
     renderNavigation();
     return;
