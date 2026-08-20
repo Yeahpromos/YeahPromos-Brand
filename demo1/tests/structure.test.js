@@ -679,7 +679,22 @@ test('readability refinement removes sub-11px readable text and strengthens focu
   assert.doesNotMatch(css, /font-size:\s*(?:[0-9]|10)px/);
   assert.match(css, /--color-text-muted:\s*#4b5563/i);
   assert.match(css, /content-frame table td[\s\S]*font-size:\s*12px/i);
-  assert.match(css, /interaction-border-beam/);
+  assert.match(css, /interaction-pulse/);
+});
+
+test('交互反馈统一为单层焦点边界和轻量按压反馈', () => {
+  assert.match(css, /--focus-accent:\s*#[0-9a-f]{6}/i);
+  assert.match(css, /\.has-interaction-pulse\s*\{/);
+  assert.doesNotMatch(css, /\.has-interaction-beam\s*\{/);
+  assert.match(css, /\.has-interaction-pulse[\s\S]*?outline:\s*none\s*!important/);
+  assert.match(css, /\.has-interaction-pulse[\s\S]*?box-shadow:\s*none\s*!important/);
+  assert.match(appJs, /closest\('button, a, \[role="button"\]'\)/);
+  assert.doesNotMatch(appJs, /closest\('button, a, input, select, textarea, \[role="button"\]'\)/);
+  const focusFeedbackCss = css.slice(css.lastIndexOf('/* Single-layer interaction feedback'));
+  assert.match(focusFeedbackCss, /\.recruitment-search__control/);
+  assert.match(focusFeedbackCss, /:focus-within[\s\S]*?border-color:\s*var\(--focus-accent\)/);
+  assert.match(focusFeedbackCss, /:focus-within[\s\S]*?box-shadow:\s*none/);
+  assert.match(focusFeedbackCss, /\.recruitment-search__control\s+input:focus-visible[\s\S]*?outline:\s*none/);
 });
 
 test('Campaigns 子页面保留筛选、选中态和详情抽屉交互契约', () => {

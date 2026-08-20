@@ -4121,11 +4121,11 @@ function setSidebarCollapsed(collapsed) {
   updateCollapsedNavigationA11y(collapsed);
 }
 
-function triggerInteractionBeam(target) {
+function triggerInteractionPulse(target) {
   if (!target) return;
-  target.classList.remove('has-interaction-beam');
-  requestAnimationFrame(() => target.classList.add('has-interaction-beam'));
-  window.setTimeout(() => target.classList.remove('has-interaction-beam'), 520);
+  target.classList.remove('has-interaction-pulse');
+  requestAnimationFrame(() => target.classList.add('has-interaction-pulse'));
+  window.setTimeout(() => target.classList.remove('has-interaction-pulse'), 420);
 }
 
 const openSidebar = () => {
@@ -5790,9 +5790,9 @@ document.querySelector('[data-sidebar-collapse]')?.addEventListener('click', () 
 
 document.addEventListener('pointerdown', (event) => {
   const target = event.target instanceof Element
-    ? event.target.closest('button, a, input, select, textarea, [role="button"]')
+    ? event.target.closest('button, a, [role="button"]')
     : null;
-  triggerInteractionBeam(target);
+  triggerInteractionPulse(target);
 });
 
 sidebarOpenButton.addEventListener('click', openSidebar);

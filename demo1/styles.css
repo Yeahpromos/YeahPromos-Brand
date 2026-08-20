@@ -2435,7 +2435,6 @@ body.is-recruitment-page-settings-page {
 
 .recruitment-settings-switch:focus-visible,
 .recruitment-settings-url-control button:focus-visible,
-.recruitment-settings-field-row:focus-within,
 .recruitment-page-preview__browser-bar button:focus-visible,
 .recruitment-page-preview__cta:focus-visible {
   outline: 2px solid var(--recruitment-settings-selected-red);
@@ -2568,8 +2567,8 @@ body.is-recruitment-page-settings-page {
 .recruitment-settings-field input:focus,
 .recruitment-settings-field textarea:focus,
 .recruitment-settings-field select:focus {
-  border-color: var(--recruitment-settings-selected-red);
-  box-shadow: 0 0 0 3px var(--recruitment-settings-soft-red);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .recruitment-settings-field--short {
@@ -3319,8 +3318,8 @@ body.is-team-accounts-page {
 .team-accounts-brand-filter select:focus,
 .team-accounts-page-size select:focus,
 .team-accounts-filter-menu select:focus {
-  border-color: var(--team-accounts-red);
-  box-shadow: 0 0 0 2px var(--team-accounts-soft-red);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .team-accounts-invite-form button {
@@ -7038,8 +7037,8 @@ body.is-restriction-rules-page {
 .workspace-form-grid input:focus-visible,
 .workspace-form-grid select:focus-visible,
 .workspace-reply textarea:focus-visible {
-  border-color: var(--color-brand);
-  box-shadow: 0 0 0 2px var(--color-brand-soft);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .workspace-select > svg {
@@ -7107,8 +7106,8 @@ body.is-restriction-rules-page {
 }
 
 .workspace-search input:focus-visible {
-  border-color: var(--color-brand);
-  box-shadow: 0 0 0 2px var(--color-brand-soft);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .workspace-search button {
@@ -10621,7 +10620,6 @@ body {
 }
 
 .recruitment-filter select:focus-visible,
-.recruitment-search__control:focus-within,
 .recruitment-search input:focus-visible,
 .recruitment-sort select:focus-visible,
 .recruitment-button:focus-visible,
@@ -13216,8 +13214,8 @@ body {
 .products-assets-search input:focus,
 .products-assets-pagination select:focus,
 .products-assets-sort select:focus {
-  border-color: var(--color-brand);
-  box-shadow: 0 0 0 2px var(--color-brand-soft);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .products-assets-search-form {
@@ -16001,7 +15999,7 @@ body.is-attribution-page {
 .settings-form-grid label { display: grid; gap: 7px; min-width: 0; }
 .settings-form-grid label > span { color: var(--color-text-soft); font-size: 11px; font-weight: 500; }
 .settings-form-grid input, .settings-form-grid textarea { width: 100%; min-height: 36px; padding: 8px 10px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); outline: 0; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 12px; resize: vertical; }
-.settings-form-grid input:focus, .settings-form-grid textarea:focus, .campaign-support-search:focus-within { border-color: var(--color-brand); }
+.settings-form-grid input:focus, .settings-form-grid textarea:focus, .campaign-support-search:focus-within { border-color: var(--focus-accent); }
 .settings-form-grid__wide { grid-column: 1 / -1; }
 .settings-form-grid--regional { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .settings-form-grid--regional .campaign-support-select { width: 100%; min-height: 36px; }
@@ -16738,8 +16736,8 @@ body.is-help-center-page {
 }
 
 .help-center-search:focus-within {
-  border-color: var(--help-red);
-  box-shadow: 0 0 0 3px var(--help-soft-red);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .help-center-search > svg {
@@ -17627,8 +17625,8 @@ body.is-api-credentials-page {
 }
 
 .api-credentials-search:focus-within {
-  border-color: var(--api-credentials-red);
-  box-shadow: 0 0 0 3px var(--api-credentials-soft-red);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .api-credentials-search > svg {
@@ -22108,8 +22106,8 @@ body.is-brand-integration-page {
 
 .partner-group-select:focus-within {
   border-radius: var(--radius-control);
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
+  outline: 1px solid var(--focus-accent);
+  outline-offset: 3px;
 }
 
 .application-row__message-wrap {
@@ -22216,7 +22214,7 @@ body.is-brand-integration-page {
 
 .recruitment-drawer-form textarea { min-height: 112px; line-height: 1.55; }
 .recruitment-drawer-form input:focus,
-.recruitment-drawer-form textarea:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px var(--color-brand-soft); }
+.recruitment-drawer-form textarea:focus { border-color: var(--focus-accent); box-shadow: none; }
 
 @media (max-width: 767px) {
   .recruitment-panel__header-actions { align-items: flex-end; flex-direction: column; gap: 7px; }
@@ -22622,13 +22620,13 @@ body.is-transaction-history-page {
 .transaction-history-filter { position: relative; display: inline-flex; min-width: 104px; height: 36px; align-items: center; }
 .transaction-history-filter select { width: 100%; height: 36px; appearance: none; padding: 0 25px 0 10px; border: 1px solid #dce1e7; border-radius: 5px; outline: 0; background: #fff; color: var(--transaction-history-text-secondary); cursor: pointer; font: inherit; font-size: 11px; font-weight: 500; }
 .transaction-history-filter select:hover,
-.transaction-history-filter select:focus { border-color: var(--transaction-history-selected-red); box-shadow: 0 0 0 3px var(--transaction-history-soft-red); }
+.transaction-history-filter select:focus { border-color: var(--focus-accent); box-shadow: none; }
 .transaction-history-filter::after { position: absolute; top: 14px; right: 10px; width: 5px; height: 5px; border-right: 1px solid var(--transaction-history-text-muted); border-bottom: 1px solid var(--transaction-history-text-muted); content: ''; pointer-events: none; transform: rotate(45deg); }
 .transaction-history-filter--time { min-width: 106px; }
 .transaction-history-filter--time svg { position: absolute; right: 26px; width: 13px; height: 13px; fill: none; stroke: var(--transaction-history-text-muted); stroke-width: 1.7; pointer-events: none; }
 .transaction-history-filter--time select { padding-right: 42px; }
 .transaction-history-search { display: inline-flex; min-width: 210px; height: 36px; align-items: center; margin-left: auto; border: 1px solid #dce1e7; border-radius: 5px; background: #fff; }
-.transaction-history-search:focus-within { border-color: var(--transaction-history-selected-red); box-shadow: 0 0 0 3px var(--transaction-history-soft-red); }
+.transaction-history-search:focus-within { border-color: var(--focus-accent); box-shadow: none; }
 .transaction-history-search > svg { width: 14px; height: 14px; margin-left: 10px; flex: 0 0 auto; fill: none; stroke: var(--transaction-history-text-muted); stroke-width: 1.8; }
 .transaction-history-search input { min-width: 0; flex: 1; height: 34px; padding: 0 8px; border: 0; outline: 0; background: transparent; color: var(--transaction-history-text-secondary); font: inherit; font-size: 11px; }
 .transaction-history-search input::placeholder { color: var(--transaction-history-text-muted); }
@@ -22749,7 +22747,9 @@ body.is-transaction-history-page {
   --radius-sidebar: 0;
   --sidebar-collapsed-width: 84px;
   --shadow-card-hover: 0 0 0 1px rgb(17 24 39 / 14%);
-  --focus-beam: rgb(230 0 0 / 18%);
+  --focus-accent: #b8525e;
+  --focus-accent-soft: rgb(184 82 94 / 14%);
+  --focus-press: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .sidebar,
@@ -22866,26 +22866,22 @@ body.is-sidebar-collapsed .account-card {
 }
 
 :where(button, a, input, select, textarea):focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--focus-beam);
+  box-shadow: none;
 }
 
 :where(.metric-card, .quick-action, .action-card, .sidebar__utility, .account-card, .products-asset-card, .recruitment-button, .workspace-button, .campaign-row-action, .messages-list__item):hover {
   border-color: var(--color-border-strong);
 }
 
-.has-interaction-beam {
-  outline: 1px solid var(--color-nav-selected) !important;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--focus-beam) !important;
-  animation: interaction-border-beam 520ms ease-out;
+.has-interaction-pulse {
+  outline: none !important;
+  box-shadow: none !important;
+  animation: interaction-pulse 420ms var(--focus-press);
 }
 
-@keyframes interaction-border-beam {
-  0% { outline-color: rgb(230 0 0 / 0%); box-shadow: 0 0 0 0 rgb(230 0 0 / 0%); }
-  45% { outline-color: var(--color-nav-selected); box-shadow: 0 0 0 5px var(--focus-beam); }
-  100% { outline-color: var(--color-nav-selected); box-shadow: 0 0 0 2px var(--focus-beam); }
+@keyframes interaction-pulse {
+  0%, 100% { opacity: 1; transform: translateZ(0); }
+  35% { opacity: .9; transform: translateY(1px) scale(.985); }
 }
 
 .content-frame table th {
@@ -22913,7 +22909,7 @@ body.is-sidebar-collapsed .account-card {
   .main-content,
   .sidebar__collapse,
   .sidebar__collapse svg,
-  .has-interaction-beam { transition: none !important; animation: none !important; }
+  .has-interaction-pulse { transition: none !important; animation: none !important; }
 }
 
 /* Coupon attribution: high-contrast rules workspace. */
@@ -23584,8 +23580,8 @@ body.is-sidebar-collapsed .sidebar .nav-item:not(.is-active):hover::before {
 
 .target-select select:focus,
 .target-search input:focus {
-  border-color: var(--color-brand);
-  box-shadow: 0 0 0 3px rgba(230, 0, 0, .08);
+  border-color: var(--focus-accent);
+  box-shadow: none;
 }
 
 .target-search {
@@ -24113,7 +24109,7 @@ body.is-sidebar-collapsed .sidebar .nav-item:not(.is-active):hover::before {
   resize: vertical;
 }
 .target-settings-form-grid input:focus,
-.target-settings-form-grid textarea:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(230, 0, 0, .08); }
+.target-settings-form-grid textarea:focus { border-color: var(--focus-accent); box-shadow: none; }
 .target-settings-form-grid--regional .target-select { width: 100%; }
 
 .target-settings-preferences { display: grid; }
@@ -24256,4 +24252,92 @@ body:not(.is-sidebar-collapsed).is-ppc-page .sidebar .nav-child[data-nav-child="
 body:not(.is-sidebar-collapsed).is-messages-page .sidebar .nav-child[data-nav-child="all-messages"].is-active::before {
   border-color: var(--color-nav-selected);
   background: var(--color-nav-selected);
+}
+
+/* Single-layer interaction feedback: one active edge per control surface. */
+:is(
+  .recruitment-search__control,
+  .help-center-search,
+  .api-credentials-search,
+  .products-assets-search,
+  .campaign-support-search,
+  .transaction-history-search
+):focus-within {
+  border-color: var(--focus-accent);
+  background-color: var(--focus-accent-soft);
+  outline: none;
+  box-shadow: none;
+}
+
+:is(
+  .recruitment-search__control,
+  .help-center-search,
+  .api-credentials-search,
+  .products-assets-search,
+  .campaign-support-search,
+  .transaction-history-search
+):focus-within input:focus {
+  border-color: transparent;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.recruitment-search__control input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.recruitment-settings-field-row:focus-within {
+  outline: none;
+}
+
+.partner-group-select:focus-within {
+  outline: 1px solid var(--focus-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.partner-group-select select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:is(
+  .campaign-search input,
+  .recruitment-settings-field input,
+  .recruitment-settings-field select,
+  .recruitment-settings-field textarea,
+  .team-accounts-invite-form input,
+  .team-accounts-search input,
+  .team-accounts-brand-filter select,
+  .team-accounts-page-size select,
+  .team-accounts-filter-menu select,
+  .workspace-select select,
+  .workspace-invite-form input,
+  .workspace-form-grid input,
+  .workspace-form-grid select,
+  .workspace-reply textarea,
+  .workspace-search input,
+  .products-assets-select select,
+  .products-assets-field input,
+  .products-assets-pagination select,
+  .products-assets-sort select,
+  .recruitment-drawer-form input,
+  .recruitment-drawer-form textarea,
+  .transaction-history-filter select,
+  .transaction-history-page-size select,
+  .target-select select,
+  .target-search input,
+  .target-settings-form-grid input,
+  .target-settings-form-grid textarea
+):focus {
+  border-color: var(--focus-accent);
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-interaction-pulse {
+    animation: none;
+  }
 }
