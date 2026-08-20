@@ -9,6 +9,7 @@ import {
   overviewMetricIds,
   selectOverviewMetric,
 } from '../overview.js';
+import * as overviewModule from '../overview.js';
 
 test('overview exposes the five reference metrics and four chart views', () => {
   assert.deepEqual(overviewMetricIds, ['clicks', 'conversions', 'gross-sales', 'commission', 'pending-payout']);
@@ -44,4 +45,37 @@ test('overview chart path uses smooth cubic segments between data points', () =>
 
   assert.equal(path, 'M0.0,10.0 C1.7,8.3 6.7,0.0 10.0,0.0 C13.3,0.0 18.3,8.3 20.0,10.0');
   assert.doesNotMatch(path, /\sL/);
+});
+
+test('overview interaction state starts without an active chart point', () => {
+  assert.equal(createOverviewState().activeChartPoint, null);
+});
+
+test('overview chart point selection returns an accessible metric summary', () => {
+  assert.equal(typeof overviewModule.selectOverviewPoint, 'function');
+  assert.equal(typeof overviewModule.getOverviewPointSummary, 'function');
+
+  const source = createOverviewState();
+  const next = overviewModule.selectOverviewPoint(source, 3);
+  const summary = overviewModule.getOverviewPointSummary(next, '7d');
+
+  assert.equal(source.activeChartPoint, null);
+  assert.equal(next.activeChartPoint, 3);
+  assert.notEqual(next, source);
+  assert.deepEqual(summary, {
+    metricId: 'clicks',
+    metricLabel: 'Clicks',
+    label: 'May 08',
+    display: '36.7K',
+    value: 36700,
+  });
+});
+
+test('overview chart point selection rejects invalid indexes and clears safely', () => {
+  const source = createOverviewState();
+  const selected = overviewModule.selectOverviewPoint(source, 1);
+
+  assert.strictEqual(overviewModule.selectOverviewPoint(source, -1), source);
+  assert.strictEqual(overviewModule.selectOverviewPoint(source, '1'), source);
+  assert.equal(overviewModule.selectOverviewPoint(selected, null).activeChartPoint, null);
 });

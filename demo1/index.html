@@ -9,7 +9,7 @@
       content="YeahPromos merchant business overview demo"
     />
     <title>Business Overview · YeahPromos</title>
-    <link rel="stylesheet" href="./styles.css?v=merchant-reference-31" />
+    <link rel="stylesheet" href="./styles.css?v=merchant-reference-32" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -251,11 +251,11 @@
           <div class="demo-state-banner" data-demo-state-banner role="status" aria-live="polite" hidden></div>
 
           <div data-overview-page>
-            <section class="metrics-section overview-metrics-section" aria-label="Key performance metrics">
+            <section class="metrics-section overview-metrics-section" data-overview-reveal="metrics" aria-label="Key performance metrics">
               <div class="metrics-grid overview-metrics-grid" data-metrics-grid></div>
             </section>
 
-            <section class="analytics-grid overview-layout" aria-label="Performance and partner insights">
+            <section class="analytics-grid overview-layout" data-overview-reveal="analytics" aria-label="Performance and partner insights">
               <article class="card overview-panel overview-chart-panel">
                 <div class="overview-panel__header">
                   <div>
@@ -275,7 +275,7 @@
                     </select>
                   </div>
                 </div>
-                <div class="overview-chart" data-overview-chart role="img" aria-label="Performance trend chart"></div>
+                <div class="overview-chart" data-overview-chart role="group" aria-label="Performance trend chart; focus a point to inspect its exact value"></div>
               </article>
 
               <article class="card ranking-card overview-panel overview-ranking-panel">
@@ -300,7 +300,7 @@
               </article>
             </section>
 
-            <section class="overview-secondary-grid" aria-label="Commission, partner status and action center">
+            <section class="overview-secondary-grid" data-overview-reveal="secondary" aria-label="Commission, partner status and action center">
               <div class="summary-grid overview-summary-grid">
                 <article class="card summary-card overview-panel" data-commission-summary></article>
                 <article class="card summary-card overview-panel" data-partner-status></article>
@@ -318,7 +318,7 @@
               </section>
             </section>
 
-            <section class="quick-actions-section overview-shortcuts-panel" aria-labelledby="quick-actions-heading">
+            <section class="quick-actions-section overview-shortcuts-panel" data-overview-reveal="shortcuts" aria-labelledby="quick-actions-heading">
               <div class="section-heading">
                 <div>
                   <h2 id="quick-actions-heading">Shortcuts</h2>
@@ -2213,6 +2213,6 @@
       <button type="button" data-toast-close aria-label="Dismiss notification"><svg><use href="#icon-x"></use></svg></button>
     </div>
 
-    <script type="module" src="./app.js?v=merchant-reference-28"></script>
+    <script type="module" src="./app.js?v=merchant-reference-29"></script>
   </body>
 </html>
