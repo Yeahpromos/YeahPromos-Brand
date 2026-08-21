@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import * as localization from '../localization.js';
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const demoDirectory = resolve(currentDirectory, '..');
@@ -77,7 +78,7 @@ test('app entry remains syntactically valid after conflict resolution', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-30"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-45"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
   assert.match(html, /data-module-page/);
@@ -572,7 +573,7 @@ test('finance neutral text uses contrast-ready dark gray tokens', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-30"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-45"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
 });
@@ -623,7 +624,7 @@ test('overview interaction surfaces expose staged motion and chart point inspect
 
 test('preview busts the entry cache for the reference dashboard skin', () => {
   assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-32"/);
-  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-30"/);
+  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-45"/);
 });
 
 test('latest preview resolves main to an immutable RawGitHack commit URL', () => {
@@ -743,4 +744,131 @@ test('打开详情抽屉时只同步选中卡片，不重绘父页面', () => {
   assert.match(targetDrawerBranch, /syncSelectedRecordCards/);
   assert.match(campaignSupportDrawerBranch, /syncSelectedRecordCards/);
   assert.match(recruitmentInviteBranch, /syncRecruitmentInviteButton/);
+});
+
+test('中文模式会统一翻译动态数量、日期、筛选文案和辅助属性', () => {
+  assert.match(appJs, /from '\.\/localization\.js\?v=merchant-reference-45'/);
+  assert.equal(localization.translateText('zh-CN', 'Showing 1 to 5 of 7 results'), '显示第 1–5 条，共 7 条结果');
+  assert.equal(localization.translateText('zh-CN', '1 – 12 of 48 assets'), '第 1–12 项，共 48 个素材');
+  assert.equal(localization.translateText('zh-CN', 'Updated May 08, 2025'), '更新于 2025 年 5 月 8 日');
+  assert.equal(localization.translateText('zh-CN', 'Search by name or keyword'), '按名称或关键词搜索');
+  assert.equal(localization.translateText('zh-CN', 'All statuses'), '全部状态');
+  assert.equal(localization.translateText('zh-CN', 'TikTok'), 'TikTok');
+  assert.equal(localization.translateText('zh-CN', 'Allow'), '允许');
+  assert.equal(localization.translateAttribute('zh-CN', 'Clear search'), '清除搜索');
+  assert.equal(localization.translateAttribute('zh-CN', 'Open campaign details'), '打开活动详情');
+  assert.equal(localization.translateText('en', 'All statuses'), 'All statuses');
+  assert.equal(localization.translateAttribute('en', 'Clear search'), 'Clear search');
+});
+
+test('中文模式会完整翻译动态页面短语而不是留下半句英文', () => {
+  const cases = {
+    'View profile': '查看资料',
+    'Monthly reach': '每月访问量',
+    'Search influencers': '搜索影响者',
+    'Influencer directory': '影响者目录',
+    'Updated today': '今日更新',
+    'Review applications with the same audit trail as the detail view.': '按照与详情视图相同的审计轨迹审核申请。',
+    'View partner record': '查看合作伙伴记录',
+    'Affiliate program': '联盟计划',
+    'Campaign views': '活动视图',
+    'Partner scope': '合作伙伴范围',
+    'Total orders': '订单总数',
+    'Brand performance trend': '品牌表现趋势',
+    'Sale amount': '销售金额',
+    'Related videos': '相关视频',
+    'Workspace settings': '工作区设置',
+    'Manage your workspace profile, regional defaults, and notification preferences.': '管理工作区资料、区域默认设置和通知偏好。',
+    'Create and manage influencer campaigns to grow your brand and drive measurable results.': '创建并管理影响者活动，提升品牌影响力并带来可量化的成果。',
+    '发现影响者 selected': '发现影响者 已选中',
+    Followers: '粉丝',
+    'Curated matches': '精选匹配',
+    'Publisher directory': '发布者目录',
+    'Partner discovery · May 12, 2025 10:32 AM': '合作伙伴发现 · 2025 年 5 月 12 日 上午 10:32',
+    '36.8% acceptance rate': '36.8% 接受率',
+    'Product feed workspace preview for the current brand scope.': '当前品牌范围的商品数据源工作区预览。',
+    '商品数据源 workspace preview for the current brand scope.': '当前品牌范围的商品数据源工作区预览。',
+    'workspace preview for the current brand scope.': '工作区预览。',
+    'This task area is reserved for the product framework. The visual shell, navigation state and brand scope are ready for the next page.': '此区域为商品框架预留。视觉外壳、导航状态和品牌范围已准备好，可用于下一页面。',
+    'Content/Blog · United States': '内容/博客 · 美国',
+    'May 12, 2025 10:32 AM': '2025 年 5 月 12 日 上午 10:32',
+    'Showing 8 of 8 transactions': '显示 8 笔，共 8 笔交易',
+    '1,238 transactions': '1,238 笔交易',
+    '2 brand terms protected': '2 个品牌词已保护',
+    '3 flagged this month': '本月 3 条已标记',
+    '2,842 products': '2,842 个商品',
+    'of 20 seats': '共 20 个席位',
+    'PPC selected': 'PPC 已选中',
+    'Last sync: May 12, 2025 09:30 AM': '上次同步：2025 年 5 月 12 日 上午 09:30',
+    'May 12, 2025 · 09:42': '2025 年 5 月 12 日 · 09:42',
+    '↑ 2 awaiting approval': '↑ 2 条待审批',
+    'Invoices (73)': '发票（73）',
+    '98% in stock': '98% 有库存',
+    'Last 24 hours': '过去 24 小时',
+    'Premium publishers': '优质发布者',
+    '4 brands': '4 个品牌',
+    '4 brands selected': '4 个品牌已选中',
+    'Payout ID': '付款 ID',
+    Reference: '参考编号',
+    'Order ID': '订单 ID',
+    'Date / Time': '日期 / 时间',
+    Time: '时间',
+    'Key name': '密钥名称',
+    'Created by': '创建者',
+    'Created on': '创建时间',
+    'Created on ↓': '创建时间 ↓',
+    'Last used': '最近使用',
+    Scopes: '权限范围',
+    'Item(s)': '商品',
+    Quantity: '数量',
+    'Sales amount': '销售金额',
+    'Commission ID': '佣金 ID',
+    'May 12, 2025 14:32': '2025 年 5 月 12 日 14:32',
+    'Auto charged commission balance': '自动扣除佣金余额',
+    'Tier 1': '第 1 层',
+    'Apr 30, 2025 by Demo Admin': '2025 年 4 月 30 日，由 Demo Admin',
+    'May 12, 2025, 10:24 AM': '2025 年 5 月 12 日，上午 10:24',
+    '1 – 6 of 6': '第 1–6 项，共 6 项',
+    '48 assets': '48 个素材',
+    'Showing 1 to 8 of 8 rules': '显示第 1–8 条，共 8 条规则',
+    '↑ 82% of total partners': '↑ 占合作伙伴总数 82%',
+    'Data-driven (recommended)': '数据驱动（推荐）',
+    'Channel type': '渠道类型',
+    'Attribution logic': '归因逻辑',
+    Permission: '权限',
+    'Technology partners': '技术合作伙伴',
+    'App users': '应用用户',
+    'VIP partners': 'VIP 合作伙伴',
+    '12 applications need review': '12 个申请待审核',
+    '+12.6% vs previous period': '较上一周期 +12.6%',
+    '1.2M monthly visits': '1.2M 月访问量',
+  };
+
+  Object.entries(cases).forEach(([source, expected]) => {
+    assert.equal(localization.translateText('zh-CN', source), expected, source);
+  });
+});
+
+test('中文模式不会局部翻译品牌名、文件名和邮箱等数据值', () => {
+  const values = [
+    'Deal Finder',
+    'Wellness Daily',
+    'Audience_Insights.xlsx',
+    'partners@couponscouch.com',
+    'Updated lookback window for Influencer Social Traffic',
+  ];
+
+  values.forEach((value) => {
+    assert.equal(localization.translateText('zh-CN', value), value, value);
+  });
+});
+
+test('切换中文路由后会重新应用本地化，避免动态页面残留英文', () => {
+  const navigateToBranch = appJs.slice(
+    appJs.indexOf('const navigateTo ='),
+    appJs.indexOf('const openPartnerDrawer ='),
+  );
+
+  assert.match(navigateToBranch, /renderPage\(\);/);
+  assert.match(navigateToBranch, /applyLocale\(\);/);
 });
