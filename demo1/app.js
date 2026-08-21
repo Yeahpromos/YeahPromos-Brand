@@ -61,7 +61,7 @@ import {
   translate,
   translateNavigationLabel,
   translatePageTitle,
-} from './localization.js?v=merchant-reference-36';
+} from './localization.js?v=merchant-reference-45';
 import {
   closeHeaderActionPanel,
   createHeaderActionState,
@@ -3911,6 +3911,7 @@ const navigateTo = (navigationId) => {
   renderNavigation();
   renderUtilityNavigationState();
   showToast(`${context.current.label} selected`);
+  applyLocale();
 
   if (window.matchMedia('(max-width: 767px)').matches) closeSidebar();
 };
