@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import * as localization from '../localization.js';
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const demoDirectory = resolve(currentDirectory, '..');
@@ -77,7 +78,7 @@ test('app entry remains syntactically valid after conflict resolution', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-30"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-36"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
   assert.match(html, /data-module-page/);
@@ -572,7 +573,7 @@ test('finance neutral text uses contrast-ready dark gray tokens', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-30"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-36"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
 });
@@ -623,7 +624,7 @@ test('overview interaction surfaces expose staged motion and chart point inspect
 
 test('preview busts the entry cache for the reference dashboard skin', () => {
   assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-32"/);
-  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-30"/);
+  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-36"/);
 });
 
 test('latest preview resolves main to an immutable RawGitHack commit URL', () => {
@@ -743,4 +744,19 @@ test('打开详情抽屉时只同步选中卡片，不重绘父页面', () => {
   assert.match(targetDrawerBranch, /syncSelectedRecordCards/);
   assert.match(campaignSupportDrawerBranch, /syncSelectedRecordCards/);
   assert.match(recruitmentInviteBranch, /syncRecruitmentInviteButton/);
+});
+
+test('中文模式会统一翻译动态数量、日期、筛选文案和辅助属性', () => {
+  assert.match(appJs, /from '\.\/localization\.js\?v=merchant-reference-36'/);
+  assert.equal(localization.translateText('zh-CN', 'Showing 1 to 5 of 7 results'), '显示第 1–5 条，共 7 条结果');
+  assert.equal(localization.translateText('zh-CN', '1 – 12 of 48 assets'), '第 1–12 项，共 48 个素材');
+  assert.equal(localization.translateText('zh-CN', 'Updated May 08, 2025'), '更新于 2025 年 5 月 8 日');
+  assert.equal(localization.translateText('zh-CN', 'Search by name or keyword'), '按名称或关键词搜索');
+  assert.equal(localization.translateText('zh-CN', 'All statuses'), '全部状态');
+  assert.equal(localization.translateText('zh-CN', 'TikTok'), 'TikTok');
+  assert.equal(localization.translateText('zh-CN', 'Allow'), '允许');
+  assert.equal(localization.translateAttribute('zh-CN', 'Clear search'), '清除搜索');
+  assert.equal(localization.translateAttribute('zh-CN', 'Open campaign details'), '打开活动详情');
+  assert.equal(localization.translateText('en', 'All statuses'), 'All statuses');
+  assert.equal(localization.translateAttribute('en', 'Clear search'), 'Clear search');
 });

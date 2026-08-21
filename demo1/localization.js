@@ -214,6 +214,481 @@ const attributeTranslations = new Map(Object.entries({
   'Dismiss partner details overlay': '关闭合作伙伴详情浮层',
 }));
 
+const phraseTranslations = new Map(Object.entries({
+  'Skip to main content': '跳转到主要内容',
+  'Followed': '已关注',
+  'Invited': '已邀请',
+  'Joined': '已加入',
+  'Sent': '已发送',
+  'Accepted': '已接受',
+  'Expired': '已过期',
+  'All': '全部',
+  'Allow': '允许',
+  'All matches': '全部匹配',
+  'All status': '全部状态',
+  'All statuses': '全部状态',
+  'All channels': '全部渠道',
+  'All methods': '全部方式',
+  'All owners': '全部负责人',
+  'All partners': '所有合作伙伴',
+  'All platforms': '全部平台',
+  'All products': '全部商品',
+  'All types': '全部类型',
+  'All categories': '全部分类',
+  'All countries': '全部国家/地区',
+  'All assets': '全部素材',
+  'All folders': '全部文件夹',
+  'All brands': '全部品牌',
+  'All regions': '全部地区',
+  'All policies': '全部政策',
+  'Any budget': '任意预算',
+  'Active': '进行中',
+  'Paused': '已暂停',
+  'Draft': '草稿',
+  'Completed': '已完成',
+  'Closed': '已关闭',
+  'Live': '进行中',
+  'Upcoming': '即将开始',
+  'Awaiting approval': '等待审批',
+  'Under review': '审核中',
+  'Declined': '已拒绝',
+  'Failed': '失败',
+  'In use': '使用中',
+  'Inactive': '未启用',
+  'Scheduled': '已排期',
+  'Active programs': '进行中的计划',
+  'Active campaigns': '进行中的活动',
+  'Active rules': '生效规则',
+  'Active restrictions': '生效限制',
+  'Active model': '当前模型',
+  'Active model summary': '当前模型摘要',
+  'All selected (3)': '已全选（3）',
+  'All selected (4)': '已全选（4）',
+  'All selected (7)': '已全选（7）',
+  'New applications': '新申请',
+  'Blocked': '已屏蔽',
+  'Sync partners': '同步合作伙伴',
+  'Relationship workspace': '合作关系工作区',
+  'Recommended': '推荐',
+  'Name': '名称',
+  'Category': '分类',
+  'Budget': '预算',
+  'Campaign': '活动',
+  'Campaign directory': '活动目录',
+  'Partner group': '合作伙伴分组',
+  'Promotion method': '推广方式',
+  'Customer reach': '客户覆盖范围',
+  'Language': '语言',
+  'Message': '消息',
+  'Follow': '关注',
+  'Email': '邮件',
+  'Referral': '推荐',
+  'Platform': '平台',
+  'Multi-channel': '多渠道',
+  'Selected': '已选中',
+  'selected': '已选中',
+  'Saved view': '已保存视图',
+  'My campaigns': '我的活动',
+  'Click-throughs': '点击量',
+  'Sales': '销售额',
+  'Co-op': '合作推广',
+  'MDF': '市场开发基金',
+  'Event': '事件',
+  'Enablement': '赋能',
+  'Affiliate': '联盟',
+  'On track': '进展正常',
+  'Stage': '阶段',
+  'Progress': '进度',
+  'Next action': '下一步操作',
+  'Execution': '执行中',
+  'No action required': '无需操作',
+  'Creator campaigns': '创作者活动',
+  'Invitation activity': '邀请动态',
+  'Application queue': '申请队列',
+  'Commission management': '佣金管理',
+  'Creative library': '素材库',
+  'Data operations': '数据操作',
+  'PPC business rules': 'PPC 业务规则',
+  'PPC policy management': 'PPC 政策管理',
+  'Billing records': '账单记录',
+  'Banners': '横幅',
+  'Images': '图片',
+  'Logos': 'Logo',
+  'Icons': '图标',
+  'GIFs': 'GIF',
+  'Newest': '最新',
+  'Oldest': '最早',
+  'Affiliate Program': '联盟计划',
+  'Attribution': '归因',
+  'Conversion rate': '转化率',
+  'Commission paid': '已付佣金',
+  'Total partners': '合作伙伴总数',
+  'Recently updated': '最近更新',
+  'Most partners': '合作伙伴最多',
+  'Highest commission': '佣金最高',
+  'Reset': '重置',
+  'Under $5,000': '低于 $5,000',
+  'Over $10,000': '高于 $10,000',
+  '$5,000 – $10,000': '$5,000–$10,000',
+  '30-day attribution window': '30 天归因窗口',
+  'Bulk approve': '批量批准',
+  'Total sales': '销售总额',
+  'Locked commission': '锁定佣金',
+  'Estimated commission': '预计佣金',
+  'This quarter': '本季度',
+  'Paid': '已付款',
+  'Void': '作废',
+  'Sale': '销售',
+  'Return': '退货',
+  'Find a campaign': '查找活动',
+  'Product detail views': '商品详情页浏览量',
+  'Add-to-carts': '加入购物车次数',
+  'Purchases': '购买次数',
+  'Product sales': '商品销售额',
+  'AMAZON BRAND REFERRAL': 'Amazon 品牌引荐',
+  'Amazon brand referral': 'Amazon 品牌引荐',
+  'Invoice date range': '发票日期范围',
+  'Payment method': '付款方式',
+  'Account credits': '账户余额',
+  'Credit card': '信用卡',
+  'Bank transfer': '银行转账',
+  'Payment type': '付款类型',
+  'Publisher payout': '发布者付款',
+  'Price plan fee': '套餐费用',
+  'Account deposit': '账户充值',
+  'Details': '详情',
+  'Compose Message': '撰写消息',
+  'Notification preferences': '通知偏好',
+  'Unread only': '仅看未读',
+  'System alerts': '系统提醒',
+  'Unread': '未读',
+  'Conversation Info': '会话信息',
+  'Conversation ID': '会话 ID',
+  'Conversation': '会话',
+  'Reply': '回复',
+  'Select date range': '选择日期范围',
+  'Year 2025': '2025 年',
+  '% rate': '% 比例',
+  'Click': '点击',
+  'Rule name': '规则名称',
+  'Scope': '范围',
+  'Base commission': '基础佣金',
+  'Bonus': '奖励',
+  'Lookback window': '回溯窗口',
+  'Search terms': '搜索词',
+  'Need policy confirmation': '需要确认政策',
+  'Policy': '政策',
+  'Block': '屏蔽',
+  'Region': '地区',
+  'Paid search': '付费搜索',
+  'Google Ads': 'Google Ads',
+  'Select': '选择',
+  'All dates': '全部日期',
+  'Manage and collaborate with your partners across the entire partnership lifecycle.': '管理合作伙伴，覆盖从建立关系到持续协作的完整生命周期。',
+  'Review and manage partner applications to grow your program network.': '审核并管理合作伙伴申请，拓展计划合作网络。',
+  'Track and manage all partner invitations you have sent.': '跟踪并管理已发送的所有合作伙伴邀请。',
+  'View, manage, and analyze all your campaigns in one place.': '在一个页面查看、管理并分析所有活动。',
+  'Create and manage your affiliate programs. Invite partners and track program performance.': '创建并管理联盟计划，邀请合作伙伴并跟踪计划表现。',
+  'Create, organize, and optimize the programs your partners promote.': '创建、整理并优化合作伙伴推广的计划。',
+  'Plan creator partnerships, track deliverables, and keep campaign spend visible.': '规划创作者合作、跟踪交付项，并清晰掌握活动支出。',
+  'Manage your creative assets and organize them into folders for easy access and use across campaigns.': '管理创意素材并整理到文件夹中，方便在各项活动中访问和使用。',
+  'Review, approve, and export the transactions generated by your affiliate program.': '审核、批准并导出联盟计划产生的交易。',
+  'Monitor campaign-level Amazon traffic and product activity.': '监控活动级 Amazon 流量与商品动态。',
+  'Monitor Amazon brand referral performance and campaign-level product activity.': '监控 Amazon 品牌引荐表现与活动级商品动态。',
+  'Review, filter, and download demo invoice records for the selected workspace.': '查看、筛选并下载当前工作区的演示发票记录。',
+  'Stay connected with your partners and never miss an important update.': '与合作伙伴保持联系，不错过任何重要更新。',
+  'Search': '搜索',
+  'Search campaigns': '搜索活动',
+  'Search programs': '搜索计划',
+  'Search invoices': '搜索发票',
+  'Search messages': '搜索消息',
+  'Search assets by name or tag': '按名称或标签搜索素材',
+  'Search order, partner or SKU': '搜索订单、合作伙伴或 SKU',
+  'Search PPC rules': '搜索 PPC 规则',
+  'Search restriction rules': '搜索限制规则',
+  'Search rules': '搜索规则',
+  'Search brands': '搜索品牌',
+  'Search by name or keyword': '按名称或关键词搜索',
+  'Use filters or search to narrow the partner set': '使用筛选器或搜索缩小合作伙伴范围',
+  'Clear search': '清除搜索',
+  'Apply search': '应用搜索',
+  'Open campaign details': '打开活动详情',
+  'Create affiliate program': '创建联盟计划',
+  'Create rule': '创建规则',
+  'Add folder': '添加文件夹',
+  'Add transaction': '添加交易',
+  'Upload asset': '上传素材',
+  'Filter': '筛选',
+  'Filters': '筛选器',
+  'Filter focus': '筛选重点',
+  'Filter messages': '筛选消息',
+  'Filter by campaign': '按活动筛选',
+  'Filter by folder': '按文件夹筛选',
+  'Filter by status': '按状态筛选',
+  'More filters': '更多筛选',
+  'View campaign': '查看活动',
+  'View': '查看',
+  'View full history': '查看完整记录',
+  'View model performance': '查看模型表现',
+  'View partner profile': '查看合作伙伴资料',
+  'Manage': '管理',
+  'Review': '审核',
+  'Review assets': '审核素材',
+  'Edit': '编辑',
+  'Delete': '删除',
+  'Archive': '归档',
+  'Assign': '分配',
+  'Change status': '更改状态',
+  'Clear selection': '清除选择',
+  'Select': '选择',
+  'Export': '导出',
+  'Export CSV': '导出 CSV',
+  'Approve': '批准',
+  'Approve budget': '批准预算',
+  'Decline': '拒绝',
+  'Resend': '重新发送',
+  'Send reply': '发送回复',
+  'Save changes': '保存更改',
+  'Cancel': '取消',
+  'Back to overview': '返回概览',
+  'Leave product feedback': '提交产品反馈',
+  'Shop Now': '立即购买',
+  'Show more': '显示更多',
+  'Previous period': '上一周期',
+  'Current period vs previous period': '本周期与上一周期对比',
+  'Across all partner groups': '覆盖所有合作伙伴分组',
+  'Partner programs': '合作伙伴计划',
+  'Campaign performance': '活动表现',
+  'Amazon BRB campaigns': 'Amazon BRB 活动',
+  'Type': '类型',
+  'Date': '日期',
+  'Date range': '日期范围',
+  'Interval': '间隔',
+  'Time range': '时间范围',
+  'Order status': '订单状态',
+  'Transaction type': '交易类型',
+  'Country': '国家/地区',
+  'Brand': '品牌',
+  'Partner type': '合作伙伴类型',
+  'Channel': '渠道',
+  'Effective date': '生效日期',
+  'Owner': '负责人',
+  'Sort by': '排序方式',
+  'Sort by:': '排序方式：',
+  'Rows': '行数',
+  'Audience': '受众',
+  'Audience size': '受众规模',
+  'Reach': '触达人数',
+  'Partners': '合作伙伴',
+  'Partner group': '合作伙伴分组',
+  'Profile': '资料',
+  'Attachments': '附件',
+  'Replies': '回复',
+  'From': '发件人',
+  'To': '收件人',
+  'Status': '状态',
+  'Actions': '操作',
+  'CATEGORY': '分类',
+  'PARTNER GROUP': '合作伙伴分组',
+  'PARTNER TYPE': '合作伙伴类型',
+  'PROMOTION METHOD': '推广方式',
+  'CUSTOMER REACH': '客户覆盖范围',
+  'PLATFORM': '平台',
+  'LANGUAGE': '语言',
+  'SEARCH': '搜索',
+  'STATUS': '状态',
+  'CHANNEL': '渠道',
+  'BUDGET': '预算',
+  'DATE': '日期',
+  'ORDER': '订单',
+  'BRAND / SKU': '品牌 / SKU',
+  'CAMPAIGN': '活动',
+  'CAMPAIGN DIRECTORY': '活动目录',
+  'CREATOR CAMPAIGNS': '创作者活动',
+  'PARTNER PROGRAMS': '合作伙伴计划',
+  'RELATIONSHIP WORKSPACE': '合作关系工作区',
+  'INVITATION ACTIVITY': '邀请动态',
+  'APPLICATION QUEUE': '申请队列',
+  'COMMISSION MANAGEMENT': '佣金管理',
+  'CREATIVE LIBRARY': '素材库',
+  'DATA OPERATIONS': '数据操作',
+  'PPC BUSINESS RULES': 'PPC 业务规则',
+  'PPC POLICY MANAGEMENT': 'PPC 政策管理',
+  'BILLING RECORDS': '账单记录',
+  'Content/Blog': '内容/博客',
+  'Content / Blog': '内容 / 博客',
+  'Coupon/Discount': '优惠券/折扣',
+  'Deal': '优惠',
+  'Social': '社交媒体',
+  'Website': '网站',
+  'Newsletter': '邮件简报',
+  'Publisher': '发布者',
+  'Influencer': '影响者',
+  'English': '英语',
+  'German': '德语',
+  'French': '法语',
+  'United States': '美国',
+  'United Kingdom': '英国',
+  'Canada': '加拿大',
+  'Australia': '澳大利亚',
+  'Germany': '德国',
+  'North America': '北美洲',
+  'Beauty & Personal Care': '美妆与个护',
+  'Health & Fitness': '健康与健身',
+  'Fashion': '时尚',
+  'Tech & Electronics': '科技与电子',
+  'Technology': '科技',
+  'Travel': '旅行',
+  'Food & Beverage': '食品与饮料',
+  'Food & Drink': '食品与饮品',
+  'Photography': '摄影',
+  'Home & Living': '家居与生活',
+  'Computer & Electronics': '电脑与电子产品',
+  'Gadgets': '数码产品',
+  'Other': '其他',
+  'creators': '创作者',
+  'deliverables': '交付项',
+  'budget': '预算',
+  'Budget used': '预算使用情况',
+  'Campaigns': '活动',
+  'campaigns': '活动',
+  'partners': '合作伙伴',
+  'assets': '素材',
+  'messages': '消息',
+  'transactions': '交易',
+  'invoices': '发票',
+  'orders': '订单',
+  'monthly visits': '月访问量',
+  'followers': '粉丝',
+  'days': '天',
+  'results': '结果',
+  'messages': '消息',
+  'invoices': '发票',
+  'transactions': '交易',
+  'vs previous period': '较上一周期',
+  'this period': '本周期',
+  'this month': '本月',
+  'this week': '本周',
+  'acceptance rate': '接受率',
+  'attribution window': '归因窗口',
+  'of total partners': '占合作伙伴总数',
+  'of total': '占总数',
+  'awaiting approval': '待审批',
+  'added this month': '本月新增',
+  'Updated': '更新于',
+  'a few minutes ago': '几分钟前',
+  'lookback window': '回溯窗口',
+  'by': '由',
+}));
+
+const monthTranslations = {
+  Jan: '1',
+  Feb: '2',
+  Mar: '3',
+  Apr: '4',
+  May: '5',
+  Jun: '6',
+  Jul: '7',
+  Aug: '8',
+  Sep: '9',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12',
+};
+
+const translateDateExpressions = (value) => {
+  let translated = value;
+  const monthPattern = '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
+  translated = translated.replace(
+    new RegExp(`\\b${monthPattern}\\s+(\\d{1,2})\\s*[–-]\\s*${monthPattern}\\s+(\\d{1,2}),\\s*(\\d{4})\\b`, 'g'),
+    (_, startMonth, startDay, endMonth, endDay, year) => `${year} 年 ${monthTranslations[startMonth]} 月 ${Number(startDay)} 日–${monthTranslations[endMonth]} 月 ${Number(endDay)} 日`,
+  );
+  translated = translated.replace(
+    new RegExp(`\\b${monthPattern}\\s+(\\d{1,2})\\s*[–-]\\s*${monthPattern}\\s+(\\d{1,2})\\b`, 'g'),
+    (_, startMonth, startDay, endMonth, endDay) => `${monthTranslations[startMonth]} 月 ${Number(startDay)} 日–${monthTranslations[endMonth]} 月 ${Number(endDay)} 日`,
+  );
+  translated = translated.replace(
+    new RegExp(`\\b${monthPattern}\\s+(\\d{1,2}),\\s*(\\d{4})\\b`, 'g'),
+    (_, month, day, year) => `${year} 年 ${monthTranslations[month]} 月 ${Number(day)} 日`,
+  );
+  translated = translated.replace(
+    new RegExp(`\\b${monthPattern}\\s+(\\d{1,2})\\b`, 'g'),
+    (_, month, day) => `${monthTranslations[month]} 月 ${Number(day)} 日`,
+  );
+  return translated.replace(/\b(\d{1,2}:\d{2})\s*(AM|PM)\b/g, (_, time, meridiem) => `${meridiem === 'AM' ? '上午' : '下午'} ${time}`);
+};
+
+const countTranslations = {
+  applications: '个申请',
+  campaigns: '个活动',
+  partners: '个合作伙伴',
+  assets: '个素材',
+  messages: '条消息',
+  invoices: '张发票',
+  transactions: '笔交易',
+  results: '条结果',
+  invitations: '条邀请',
+  orders: '个订单',
+};
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const orderedPhraseTranslations = [...new Map([...textTranslations, ...phraseTranslations])]
+  .sort(([left], [right]) => right.length - left.length);
+
+const replaceTranslatedPhrases = (value) => orderedPhraseTranslations
+  .reduce((result, [source, target]) => result.replace(
+    new RegExp(`(?<![A-Za-z])${escapeRegExp(source)}(?![A-Za-z])`, 'g'),
+    target,
+  ), value);
+
+const translateDynamicText = (value) => {
+  if (textTranslations.has(value)) return textTranslations.get(value);
+  if (phraseTranslations.has(value)) return phraseTranslations.get(value);
+
+  let match = value.match(/^Showing (\d+) to (\d+) of ([\d,]+) (results|messages|invoices|transactions|assets|campaigns)$/i)
+    ?? value.match(/^Showing (\d+)[–-](\d+) of ([\d,]+) (results|messages|invoices|transactions|assets|campaigns)$/i)
+    ?? value.match(/^(\d+)\s*[–-]\s*(\d+) of ([\d,]+) (results|messages|invoices|transactions|assets|campaigns)$/i);
+  if (match) {
+    const itemUnit = match[4].toLowerCase() === 'assets' ? '项' : '条';
+    return `${value.startsWith('Showing') ? '显示' : ''}第 ${match[1]}–${match[2]} ${itemUnit}，共 ${match[3]} ${countTranslations[match[4].toLowerCase()]}`;
+  }
+
+  match = value.match(/^(\d+) (applications|campaigns|partners|assets|messages|invoices|transactions|results) in this view$/i);
+  if (match) return `${match[1]} ${countTranslations[match[2].toLowerCase()]}`;
+
+  match = value.match(/^(\d+) total campaigns$/i);
+  if (match) return `共 ${match[1]} 个活动`;
+
+  match = value.match(/^(\d+) recent invitations$/i);
+  if (match) return `${match[1]} 条近期邀请`;
+
+  match = value.match(/^(\d+) monthly visits$/i);
+  if (match) return `${match[1]} 月访问量`;
+
+  match = value.match(/^(Under|Over) (.+)$/i);
+  if (match) return `${match[1].toLowerCase() === 'under' ? '低于' : '高于'} ${match[2]}`;
+
+  match = value.match(/^Updated (.+)$/i);
+  if (match) return `更新于 ${translateDateExpressions(replaceTranslatedPhrases(match[1]))}`;
+
+  const translated = replaceTranslatedPhrases(value);
+  return translateDateExpressions(translated);
+};
+
+export const translateText = (locale, source) => {
+  const original = String(source ?? '');
+  if (locale !== CHINESE_LOCALE || !original.trim()) return original;
+  const leading = original.match(/^\s*/)?.[0] ?? '';
+  const trailing = original.match(/\s*$/)?.[0] ?? '';
+  const translated = translateDynamicText(original.trim());
+  return `${leading}${translated}${trailing}`;
+};
+
+export const translateAttribute = (locale, source) => {
+  if (source == null || locale !== CHINESE_LOCALE) return source;
+  return attributeTranslations.get(source) ?? translateText(locale, source);
+};
+
 export const getLocale = () => window.localStorage.getItem(LOCALE_STORAGE_KEY) === CHINESE_LOCALE
   ? CHINESE_LOCALE
   : 'en';
@@ -232,12 +707,8 @@ export const translatePageTitle = (locale, pageId, fallback) => locale === CHINE
 
 const localizeNode = (node) => {
   const source = node.nodeValue;
-  const trimmed = source.trim();
-  const translated = textTranslations.get(trimmed);
-  if (!translated) return;
-  const leading = source.match(/^\s*/)?.[0] ?? '';
-  const trailing = source.match(/\s*$/)?.[0] ?? '';
-  node.nodeValue = `${leading}${translated}${trailing}`;
+  const translated = translateText(CHINESE_LOCALE, source);
+  if (translated !== source) node.nodeValue = translated;
 };
 
 const localizeAttributes = (root) => {
@@ -245,8 +716,8 @@ const localizeAttributes = (root) => {
   elements.forEach((element) => {
     ['aria-label', 'title', 'placeholder'].forEach((attribute) => {
       const source = element.getAttribute(attribute);
-      const translated = attributeTranslations.get(source);
-      if (translated) element.setAttribute(attribute, translated);
+      const translated = translateAttribute(CHINESE_LOCALE, source);
+      if (translated !== source) element.setAttribute(attribute, translated);
     });
   });
 };

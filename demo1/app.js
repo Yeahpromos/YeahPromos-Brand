@@ -61,7 +61,7 @@ import {
   translate,
   translateNavigationLabel,
   translatePageTitle,
-} from './localization.js';
+} from './localization.js?v=merchant-reference-36';
 import {
   closeHeaderActionPanel,
   createHeaderActionState,
