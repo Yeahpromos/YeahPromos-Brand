@@ -9,7 +9,7 @@
       content="YeahPromos merchant business overview demo"
     />
     <title>Business Overview · YeahPromos</title>
-    <link rel="stylesheet" href="./styles.css?v=merchant-reference-32" />
+    <link rel="stylesheet" href="./styles.css?v=merchant-reference-42" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -154,13 +154,24 @@
                     <option value="syncing">Syncing</option>
                   </select>
                 </label>
-                <div class="period-picker">
-                  <button class="period-picker__trigger" type="button" data-period-toggle aria-expanded="false">
-                    <svg><use href="#icon-calendar"></use></svg>
-                    <span data-period-label>May 05 – May 12, 2025</span>
-                    <svg class="period-picker__chevron"><use href="#icon-chevron"></use></svg>
-                  </button>
-                  <div class="period-picker__menu" data-period-menu hidden></div>
+                <div class="period-picker" data-period-picker>
+                  <span class="period-picker__label">Date range</span>
+                  <div class="period-picker__fields" role="group" aria-label="Date range">
+                    <div class="period-picker__control">
+                      <input class="period-picker__input" type="text" data-period-start data-period-value="2025-05-05" aria-label="Start date" value="2025/05/05" readonly />
+                      <button class="period-picker__calendar-button" type="button" data-period-trigger="start" data-no-interaction-pulse aria-label="Open start date picker" aria-controls="period-calendar" aria-expanded="false">
+                        <svg aria-hidden="true"><use href="#icon-calendar"></use></svg>
+                      </button>
+                    </div>
+                    <span class="period-picker__separator" aria-hidden="true">—</span>
+                    <div class="period-picker__control">
+                      <input class="period-picker__input" type="text" data-period-end data-period-value="2025-05-12" aria-label="End date" value="2025/05/12" readonly />
+                      <button class="period-picker__calendar-button" type="button" data-period-trigger="end" data-no-interaction-pulse aria-label="Open end date picker" aria-controls="period-calendar" aria-expanded="false">
+                        <svg aria-hidden="true"><use href="#icon-calendar"></use></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="period-picker__popover" id="period-calendar" data-period-popover hidden role="dialog" aria-label="Date picker"></div>
                 </div>
               </div>
               <div class="page-header__page-actions" data-page-actions hidden>
@@ -185,12 +196,6 @@
               </div>
               <div class="page-header__page-actions restriction-rules-page-actions" data-restriction-rules-actions hidden>
                 <button class="button button--primary" type="button" data-restriction-rules-action="create">
-                  <svg><use href="#icon-plus"></use></svg>
-                  Create rule
-                </button>
-              </div>
-              <div class="page-header__page-actions ppc-page-actions" data-ppc-actions hidden>
-                <button class="button button--primary" type="button" data-ppc-action="create">
                   <svg><use href="#icon-plus"></use></svg>
                   Create rule
                 </button>
@@ -1013,152 +1018,6 @@
               </section>
 
               <aside class="restriction-rules-card restriction-rules-detail-card" data-restriction-rules-detail aria-labelledby="restriction-rules-detail-title"></aside>
-            </div>
-          </section>
-
-          <section class="restriction-rules-page ppc-page" data-ppc-page hidden aria-labelledby="ppc-page-title">
-            <h2 id="ppc-page-title" class="sr-only">PPC</h2>
-
-            <div class="restriction-rules-summary-grid" data-ppc-summary></div>
-
-            <aside class="restriction-rules-policy-strip" aria-label="PPC decision priority">
-              <span class="restriction-rules-policy-strip__icon"><svg><use href="#icon-shield"></use></svg></span>
-              <div>
-                <span class="eyebrow">PPC business rules</span>
-                <strong>Specific match → Block → Review → Allow</strong>
-                <p>Partner, campaign, and region scope wins first. Undefined brand terms default to Block; missing evidence is Review, never automatic approval.</p>
-              </div>
-              <button class="button button--secondary" type="button" data-ppc-action="policy">View policy order</button>
-            </aside>
-
-            <div class="restriction-rules-layout">
-              <section class="restriction-rules-card restriction-rules-list-card" aria-labelledby="ppc-list-title">
-                <div class="restriction-rules-card__header">
-                  <div>
-                    <span class="eyebrow">PPC policy management</span>
-                    <h2 id="ppc-list-title">PPC</h2>
-                    <p>Define paid-search keywords, channels, regions, partner scope, and violation handling.</p>
-                  </div>
-                  <button class="icon-button restriction-rules-settings" type="button" data-ppc-action="settings" aria-label="Configure PPC rules table">
-                    <svg><use href="#icon-settings"></use></svg>
-                  </button>
-                </div>
-
-                <div class="restriction-rules-toolbar" aria-label="PPC rule filters">
-                  <label class="restriction-rules-filter">
-                    <span>Status</span>
-                    <select data-ppc-filter="status" aria-label="Filter PPC rules by status">
-                      <option value="all">All statuses</option>
-                      <option value="Active">Active</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Expired">Expired</option>
-                    </select>
-                  </label>
-                  <label class="restriction-rules-filter">
-                    <span>Policy</span>
-                    <select data-ppc-filter="policy" aria-label="Filter PPC rules by policy">
-                      <option value="all">All policies</option>
-                      <option value="Block">Block</option>
-                      <option value="Allow">Allow</option>
-                      <option value="Review">Review</option>
-                    </select>
-                  </label>
-                  <label class="restriction-rules-filter">
-                    <span>Channel</span>
-                    <select data-ppc-filter="channel" aria-label="Filter PPC rules by channel">
-                      <option value="all">All channels</option>
-                      <option value="Paid search">Paid search</option>
-                      <option value="Google Ads">Google Ads</option>
-                      <option value="Meta / TikTok">Meta / TikTok</option>
-                    </select>
-                  </label>
-                  <label class="restriction-rules-filter">
-                    <span>Region</span>
-                    <select data-ppc-filter="region" aria-label="Filter PPC rules by region">
-                      <option value="all">All regions</option>
-                      <option value="North America">North America</option>
-                      <option value="US, CA, UK">US, CA, UK</option>
-                      <option value="US, UK">US, UK</option>
-                    </select>
-                  </label>
-                  <label class="restriction-rules-filter">
-                    <span>Effective date</span>
-                    <select data-ppc-filter="effectiveDate" aria-label="Filter PPC rules by effective date">
-                      <option value="all">All dates</option>
-                      <option value="30d">Last 30 days</option>
-                      <option value="90d">Last 90 days</option>
-                      <option value="2025">Year 2025</option>
-                    </select>
-                  </label>
-                  <button class="button button--secondary restriction-rules-more-filters" type="button" data-ppc-action="more-filters">
-                    <svg><use href="#icon-filter"></use></svg>
-                    More filters
-                  </button>
-                  <label class="restriction-rules-search">
-                    <span class="sr-only">Search PPC rules</span>
-                    <svg><use href="#icon-search"></use></svg>
-                    <input type="search" data-ppc-search placeholder="Search PPC rules..." autocomplete="off" />
-                  </label>
-                </div>
-
-                <div class="restriction-rules-table-scroll">
-                  <table class="restriction-rules-table">
-                    <caption class="sr-only">PPC rules</caption>
-                    <colgroup>
-                      <col class="restriction-rules-col--check" />
-                      <col class="restriction-rules-col--name" />
-                      <col class="restriction-rules-col--policy" />
-                      <col class="restriction-rules-col--terms" />
-                      <col class="restriction-rules-col--channel" />
-                      <col class="restriction-rules-col--region" />
-                      <col class="restriction-rules-col--scope" />
-                      <col class="restriction-rules-col--effective" />
-                      <col class="restriction-rules-col--status" />
-                      <col class="restriction-rules-col--actions" />
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th scope="col">
-                          <label class="restriction-rules-checkbox restriction-rules-checkbox--header">
-                            <input type="checkbox" data-ppc-select-all aria-label="Select all visible PPC rules" />
-                            <span aria-hidden="true"></span>
-                          </label>
-                        </th>
-                        <th scope="col">Rule name</th>
-                        <th scope="col">Policy</th>
-                        <th scope="col">Keywords / terms</th>
-                        <th scope="col">Channel</th>
-                        <th scope="col">Region</th>
-                        <th scope="col">Partner scope</th>
-                        <th scope="col">Effective date</th>
-                        <th scope="col">Status</th>
-                        <th scope="col"><span class="sr-only">Actions</span></th>
-                      </tr>
-                    </thead>
-                    <tbody data-ppc-rows></tbody>
-                  </table>
-                </div>
-
-                <div class="restriction-rules-list-footer">
-                  <span data-ppc-result-count>Showing 1 to 7 of 7 rules</span>
-                  <div class="restriction-rules-pagination" aria-label="PPC rules pagination">
-                    <button type="button" aria-label="Previous PPC rules page" disabled>‹</button>
-                    <button type="button" class="is-current" aria-current="page" data-ppc-page-number="1">1</button>
-                    <button type="button" data-ppc-page-number="2">2</button>
-                    <button type="button" aria-label="Next PPC rules page" data-ppc-action="next-page">›</button>
-                    <label>
-                      <span class="sr-only">PPC rows per page</span>
-                      <select aria-label="PPC rows per page">
-                        <option>10 / page</option>
-                        <option>25 / page</option>
-                      </select>
-                    </label>
-                  </div>
-                </div>
-              </section>
-
-              <aside class="restriction-rules-card restriction-rules-detail-card" data-ppc-detail aria-labelledby="ppc-detail-title"></aside>
             </div>
           </section>
 
@@ -2213,6 +2072,6 @@
       <button type="button" data-toast-close aria-label="Dismiss notification"><svg><use href="#icon-x"></use></svg></button>
     </div>
 
-    <script type="module" src="./app.js?v=merchant-reference-45"></script>
+<script type="module" src="./app.js?v=merchant-reference-54"></script>
   </body>
 </html>

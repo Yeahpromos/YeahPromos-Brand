@@ -63,6 +63,37 @@ test('selectPeriod ignores an unknown period', () => {
   assert.equal(result, source);
 });
 
+test('selectDateRange updates the selected dates and uses the closest overview snapshot', async () => {
+  const { createDashboardState, selectDateRange } = await import('../app-core.js');
+  assert.equal(typeof selectDateRange, 'function');
+
+  const source = createDashboardState({
+    periods: [
+      {
+        id: '7d',
+        startDate: '2025-05-05',
+        endDate: '2025-05-12',
+        snapshot: { metrics: [{ id: 'clicks', value: '100' }] },
+      },
+      {
+        id: '30d',
+        startDate: '2025-04-13',
+        endDate: '2025-05-12',
+        snapshot: { metrics: [{ id: 'clicks', value: '300' }] },
+      },
+    ],
+    metrics: [{ id: 'clicks', value: '100' }],
+  });
+  const result = selectDateRange(source, '2025-04-13', '2025-05-12');
+
+  assert.equal(source.selectedPeriod, '7d');
+  assert.equal(result.selectedPeriod, '30d');
+  assert.equal(result.selectedStartDate, '2025-04-13');
+  assert.equal(result.selectedEndDate, '2025-05-12');
+  assert.equal(result.metrics[0].value, '300');
+  assert.notEqual(result, source);
+});
+
 test('selectDemoState only accepts supported showcase states', () => {
   const source = createDashboardState(fixture);
   const empty = selectDemoState(source, 'empty');

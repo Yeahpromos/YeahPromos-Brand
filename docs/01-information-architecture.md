@@ -47,8 +47,7 @@ flowchart TD
     U --> U1["佣金规则"]
     U --> U2["归因与优惠券规则"]
     U --> U3["Restriction rules"]
-    U --> U4["PPC"]
-    U --> U5["链接参数"]
+    U --> U4["链接参数"]
 
     APP --> D["6. 数据与交易"]
     D --> D1["绩效分析"]
@@ -87,7 +86,7 @@ flowchart TD
 | 招募与伙伴 | 找到合适伙伴并建立、维护合作关系 | 达人/媒体发现、邀请、审核、伙伴、分组 | `C` |
 | 活动 | 把伙伴、商品、素材和规则组织为可执行计划 | 联盟计划、达人活动、活动详情 | `R`：有入口和邀请分支，详细页缺证据 |
 | 商品与推广资产 | 准备伙伴可使用的商品与促销内容 | 产品库、Amazon 筛选规则、优惠券、文案/邮件、横幅/图片 | 产品库/Amazon 规则/优惠券为 `C`，其他为 `R` |
-| 佣金与规则 | 定义合作的商业与合规条件 | 佣金、归因、Restriction rules、PPC、链接参数 | 佣金为 `C`，其余为 `R` |
+| 佣金与规则 | 定义合作的商业与合规条件 | 佣金、归因、Restriction rules、链接参数 | 佣金为 `C`，其余为 `R` |
 | 数据与交易 | 评估流量、订单、销售、佣金和 Amazon BRB | 绩效、品牌、交易、申诉、BRB、导出 | 大部分为 `C` |
 | 财务 | 确保余额充足并管理付款与发票 | 充值、账单、付款明细、发票下载 | `C` |
 | 消息与通知 | 处理站内沟通、系统提醒和邮件模板 | 信箱、通知、群发、模板 | 模板为 `C`，信箱/通知为 `R` |
@@ -117,8 +116,7 @@ flowchart TD
 | Tools / Commission Rules | 佣金与规则 / 佣金规则 | CPS 为当前明确路径；CPI 待业务确认 |
 | Tools / Coupon Attribution | 佣金与规则 / 归因与优惠券规则 | 优惠券所有权优先、跟踪链接冲突、回退和审计规则 |
 | Tools / Recruitment Page | 集成与设置 / 品牌与站点 | 若为站外招募页，只管理站内配置，不纳入站外页面设计 |
-| Tools / Restriction Rules | 佣金与规则 / Restriction rules | 原有 PPC 限制规则、关键词/品牌词、渠道、地区、伙伴范围和违规处理 |
-| Tools / PPC | 佣金与规则 / PPC | 当前 PPC 业务规则、Block/Allow/Review 优先级和审计详情 |
+| Tools / Restriction Rules | 佣金与规则 / Restriction rules | PPC 限制规则、关键词/品牌词、渠道、地区、伙伴范围、Block/Allow/Review 优先级和审计详情 |
 | Tools / Link Parameters | 佣金与规则 / 链接参数 | 只被菜单引用，需补字段 |
 | Tools / API Docs | 集成与设置 / API 与开发者设置 | 文档入口保留，开发者功能需单独定义 |
 | Tools / PBoost.AI | 待决定 | 仅菜单引用；需先定义商家任务，不能仅保留 AI 标签 |

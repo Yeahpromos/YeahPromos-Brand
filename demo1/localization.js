@@ -31,7 +31,6 @@ const navigationTranslations = {
   'commission-rules-list': '佣金规则',
   'attribution-rules': '归因规则',
   'restriction-rules': '限制规则',
-  ppc: 'PPC',
   'data-transactions': '数据与交易',
   performance: '表现',
   'performance-brand': '按品牌查看表现',
@@ -174,6 +173,15 @@ const textTranslations = new Map(Object.entries({
   'Add product': '添加商品',
   'Add coupon': '添加优惠券',
   'Export report': '导出报告',
+  'Date range': '日期范围',
+  'Date range updated': '日期范围已更新',
+  'Start date must be on or before end date': '开始日期必须早于或等于结束日期',
+  'Previous month': '上个月',
+  'Next month': '下个月',
+  'Previous year': '上一年',
+  'Next year': '下一年',
+  Clear: '清除',
+  Today: '今天',
   'Select a period': '选择周期',
   'Last 7 days': '最近 7 天',
   'Last 30 days': '最近 30 天',
@@ -201,6 +209,12 @@ const attributeTranslations = new Map(Object.entries({
   Notifications: '通知',
   'Download center': '下载中心',
   'Choose demo state': '选择演示状态',
+  'Start date': '开始日期',
+  'End date': '结束日期',
+  'Date picker': '日期选择器',
+  'Select date': '选择日期',
+  'Open start date picker': '打开开始日期选择器',
+  'Open end date picker': '打开结束日期选择器',
   'Collapse sidebar': '收起侧边栏',
   'Open menu': '打开菜单',
   'Close menu': '关闭菜单',
@@ -308,7 +322,6 @@ const phraseTranslations = new Map(Object.entries({
   'Commission management': '佣金管理',
   'Creative library': '素材库',
   'Data operations': '数据操作',
-  'PPC business rules': 'PPC 业务规则',
   'PPC policy management': 'PPC 政策管理',
   'Billing records': '账单记录',
   'Banners': '横幅',
@@ -403,8 +416,8 @@ const phraseTranslations = new Map(Object.entries({
   'Search invoices': '搜索发票',
   'Search messages': '搜索消息',
   'Search assets by name or tag': '按名称或标签搜索素材',
+  'Search assets by name or tag...': '按名称或标签搜索素材…',
   'Search order, partner or SKU': '搜索订单、合作伙伴或 SKU',
-  'Search PPC rules': '搜索 PPC 规则',
   'Search restriction rules': '搜索限制规则',
   'Search rules': '搜索规则',
   'Search brands': '搜索品牌',
@@ -512,8 +525,6 @@ const phraseTranslations = new Map(Object.entries({
   'COMMISSION MANAGEMENT': '佣金管理',
   'CREATIVE LIBRARY': '素材库',
   'DATA OPERATIONS': '数据操作',
-  'PPC BUSINESS RULES': 'PPC 业务规则',
-  'PPC POLICY MANAGEMENT': 'PPC 政策管理',
   'BILLING RECORDS': '账单记录',
   'Content/Blog': '内容/博客',
   'Content / Blog': '内容 / 博客',
@@ -588,7 +599,48 @@ const phraseTranslations = new Map(Object.entries({
   'Updated today': '今日更新',
   'Review applications with the same audit trail as the detail view.': '按照与详情视图相同的审计轨迹审核申请。',
   'View partner record': '查看合作伙伴记录',
+  'View performance': '查看表现',
+  'Close partner details': '关闭合作伙伴详情',
+  'Close campaign details': '关闭活动详情',
+  'Relationship summary': '关系摘要',
+  'Tracked commission': '跟踪佣金',
+  'Partner profile': '合作伙伴资料',
+  Source: '来源',
+  Submitted: '提交时间',
+  new: '新申请',
+  'under-review': '审核中',
+  approved: '已批准',
+  declined: '已拒绝',
+  Target: '目标',
   'Affiliate program': '联盟计划',
+  'Influencer campaign': '影响者活动',
+  'Program rhythm': '计划节奏',
+  'Healthy partner activity': '合作伙伴活动健康',
+  'Program pulse': '计划动态',
+  'Campaign pulse': '活动动态',
+  'Commission rate': '佣金比例',
+  'Program details': '计划详情',
+  'Delivery snapshot': '交付概览',
+  'Activity signal': '活动信号',
+  'Related content': '相关内容',
+  'Keep browsing': '继续浏览',
+  'Manage program': '管理计划',
+  Subject: '主题',
+  'Partner email': '合作伙伴邮箱',
+  'Partnership opportunity from YeahPromos': '来自 YeahPromos 的合作机会',
+  'Personal note': '个性化备注',
+  'Write a clear next step for this partner.': '为该合作伙伴写下清晰的下一步。',
+  'Add context to make the invitation feel personal.': '补充背景信息，让邀请更具个性。',
+  'Send message': '发送消息',
+  'Send invitation': '发送邀请',
+  'Relationship snapshot': '关系概览',
+  'Current status': '当前状态',
+  'Delivery plan': '交付计划',
+  'Campaign snapshot': '活动概览',
+  'Budget allocated': '已分配预算',
+  Creators: '创作者',
+  Deliverables: '交付项',
+  Flight: '活动周期',
   'Campaign views': '活动视图',
   'Partner scope': '合作伙伴范围',
   'Total clicks': '点击总数',
@@ -628,6 +680,8 @@ const phraseTranslations = new Map(Object.entries({
   'No invitations found': '未找到邀请记录',
   'Try clearing a filter or searching another partner.': '请清除筛选条件或搜索其他合作伙伴。',
   'Related videos': '相关视频',
+  'Open campaign workspace': '打开活动工作区',
+  'Partner workspace': '合作伙伴工作区',
   'No programs match these filters': '没有符合这些筛选条件的计划',
   'No influencer campaigns match these filters': '没有符合这些筛选条件的影响者活动',
   'Try clearing a filter or using a broader search.': '请清除筛选条件或扩大搜索范围。',
@@ -715,6 +769,45 @@ const phraseTranslations = new Map(Object.entries({
   'Partner management': '合作伙伴管理',
   'Manage partners, review applications, and grow your affiliate network.': '管理合作伙伴、审核申请并拓展联盟网络。',
   'Payments & reporting': '付款与报告',
+  'Find answers, learn best practices, and get the support you need.': '查找答案、了解最佳实践，并获得所需支持。',
+  'Search help articles': '搜索帮助文章',
+  'Press / to search': '按 / 搜索',
+  'Contact support': '联系支持',
+  'Can’t find what you’re looking for?': '找不到你要查找的内容？',
+  'Our support team is here to help.': '我们的支持团队随时为你提供帮助。',
+  'Our support hours': '支持时间',
+  'Mon – Fri, 9:00 AM – 6:00 PM (UTC)': '周一至周五，上午 9:00–下午 6:00（UTC）',
+  'View my support tickets': '查看我的支持工单',
+  'Popular articles': '热门文章',
+  'Start with the answers other merchants use most.': '先从其他商家最常使用的答案开始。',
+  'View all articles': '查看所有文章',
+  'Load more articles': '加载更多文章',
+  'System status': '系统状态',
+  'All systems operational': '所有系统运行正常',
+  'Everything is running smoothly.': '一切运行顺畅。',
+  'Partner Dashboard': '合作伙伴控制台',
+  'Email Delivery': '邮件发送',
+  'Payment Processing': '付款处理',
+  Operational: '运行正常',
+  'View status page': '查看状态页',
+  'No help articles found': '未找到帮助文章',
+  'Try a different search term or browse a help category.': '请尝试其他搜索词或浏览帮助分类。',
+  'Getting started with YeahPromos': 'YeahPromos 入门指南',
+  'A step-by-step guide to set up your merchant account and launch your first program.': '分步指导你设置商家账户并启动第一个计划。',
+  'How to create an affiliate program': '如何创建联盟计划',
+  'Learn how to configure program settings, commission plans, and partner terms.': '了解如何配置计划设置、佣金方案和合作伙伴条款。',
+  'Review and approve partner applications': '审核并批准合作伙伴申请',
+  'How to review, approve, or decline applications from potential partners.': '了解如何审核、批准或拒绝潜在合作伙伴的申请。',
+  'Understanding commissions and payouts': '了解佣金与付款',
+  'Learn how commissions are calculated, payouts are scheduled, and payment methods work.': '了解佣金如何计算、付款如何排期以及付款方式如何运作。',
+  'Generate and export performance reports': '生成并导出表现报告',
+  'Create custom reports to track clicks, conversions, and earnings.': '创建自定义报告，跟踪点击量、转化次数和收益。',
+  'Invite your first partner': '邀请你的第一位合作伙伴',
+  'Use partner discovery and invitations to build your first partner pipeline.': '使用合作伙伴发现和邀请功能，建立你的第一批合作伙伴线索。',
+  'Connect your store and verify tracking': '连接店铺并验证跟踪',
+  'Check your store connection, tracking provider, and first conversion signals.': '检查店铺连接、跟踪服务商和首批转化信号。',
+  'Read your performance dashboard': '阅读表现概览',
+  'Understand the metrics that explain partner activity, sales, and commission health.': '了解反映合作伙伴活动、销售和佣金健康度的指标。',
   'Understand commissions, payouts, and performance reports.': '了解佣金、付款和表现报告。',
   'Full name': '姓名',
   'Email address': '邮箱地址',
@@ -875,6 +968,14 @@ const phraseTranslations = new Map(Object.entries({
   'Valid dates': '有效日期',
   Usage: '使用次数',
   'SELECTED ASSET': '已选素材',
+  'Selected asset': '已选素材',
+  'No assets found': '未找到素材',
+  'Try another category, folder, status, or search term.': '请尝试其他分类、文件夹、状态或搜索词。',
+  'Select an asset': '选择素材',
+  'Choose an asset from the library to review its details.': '从素材库选择一个素材以查看详情。',
+  'Open asset preview': '打开素材预览',
+  'Close asset details': '关闭素材详情',
+  'More asset actions': '更多素材操作',
   'Image (JPG)': '图片（JPG）',
   Dimensions: '尺寸',
   'File size': '文件大小',
@@ -919,9 +1020,6 @@ const phraseTranslations = new Map(Object.entries({
   'Enforcement activity': '执行动态',
   'Recent policy checks for this rule.': '该规则的最近政策检查。',
   'Policy checks are recorded for audit review.': '政策检查会记录下来供审计复核。',
-  'View policy order': '查看政策顺序',
-  'Specific match → Block → Review → Allow': '具体匹配 → 屏蔽 → 审核 → 允许',
-  'Partner, campaign, and region scope wins first. Undefined brand terms default to Block; missing evidence is Review, never automatic approval.': '合作伙伴、活动和地区范围优先。未定义的品牌词默认屏蔽；缺少证据时进入审核，绝不自动批准。',
   'Manage teammate access and permissions for your brands and programs.': '管理品牌和计划的团队成员访问权限。',
   'Create new account': '创建新账户',
   'Active members': '活跃成员',
@@ -1036,10 +1134,7 @@ const phraseTranslations = new Map(Object.entries({
   'Last-click within channel': '渠道内末次点击',
   'Data-driven (weighted)': '数据驱动（加权）',
   'First-click within channel': '渠道内首次点击',
-  'PPC rules': 'PPC 规则',
-  'PPC rows per page': '每页 PPC 规则数',
   'Selected restriction': '已选限制规则',
-  'Selected PPC rule': '已选 PPC 规则',
   'Keywords / terms': '关键词 / 词组',
   'Approved partners': '已批准合作伙伴',
   'Non-brand product terms': '非品牌商品词',
@@ -1135,8 +1230,6 @@ const phraseTranslations = new Map(Object.entries({
   '30% off for VIP members': 'VIP 会员 7 折',
   'Minimum spend $150': '最低消费 $150',
   'Define paid-search terms, channels, regions, and partner eligibility.': '定义付费搜索词、渠道、地区和合作伙伴资格。',
-  'Control PPC keywords, channels, regions, partner eligibility, and violation handling for your programs.': '管理计划的 PPC 关键词、渠道、地区、合作伙伴资格和违规处理。',
-  'Define paid-search terms, channels, regions, and partner scope.': '定义付费搜索词、渠道、地区和合作伙伴范围。',
   'Coupon partners': '优惠券合作伙伴',
   '2 brand terms': '2 个品牌词',
   '18 approved terms': '18 个已批准词',
@@ -1150,15 +1243,7 @@ const phraseTranslations = new Map(Object.entries({
   'Partners must use approved non-brand keywords for paid search': '合作伙伴必须使用已批准的非品牌关键词进行付费搜索',
   'Match type': '匹配类型',
   'Exact + phrase match': '精确匹配 + 词组匹配',
-  'Violation action': '违规处理',
-  'Decision priority': '决策优先级',
-  'Apply the policy in this order when rules overlap.': '规则重叠时按此顺序应用政策。',
-  'Partner + campaign + region rules override broader channel or global rules.': '合作伙伴 + 活动 + 地区规则优先于更宽泛的渠道或全局规则。',
-  'At the same scope, a Block decision wins over Allow; Review pauses final approval.': '在相同范围内，屏蔽优先于允许；审核会暂停最终批准。',
-  'New brand and competitor terms are protected until a merchant explicitly allows them.': '新品牌词和竞品词在商家明确允许前均受保护。',
-  'Missing landing-page or keyword evidence is Review, never an automatic approval.': '缺少落地页或关键词证据时进入审核，不会自动批准。',
   'Audit evidence': '审计证据',
-  'Each decision stores the keyword, channel, region, partner, landing page, rule ID, action, and timestamp.': '每项决策都会记录关键词、渠道、地区、合作伙伴、落地页、规则 ID、操作和时间戳。',
   'Applies to all partners across all products and channels.': '适用于所有商品和渠道中的全部合作伙伴。',
   'Tier 1': '第 1 层',
   'Tier 2': '第 2 层',
@@ -1229,6 +1314,8 @@ const countTranslations = {
   invoices: '张发票',
   transactions: '笔交易',
   results: '条结果',
+  articles: '篇文章',
+  guides: '篇指南',
   invitations: '条邀请',
   orders: '个订单',
   rules: '条规则',
@@ -1279,6 +1366,9 @@ const translateDynamicText = (value) => {
   match = value.match(/^((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s*\d{4})\s+·\s+(\d{1,2}:\d{2})$/i);
   if (match) return `${translateDateExpressions(match[1])} · ${match[2]}`;
 
+  match = value.match(/^([\d,.]+[KM]?)\s+views\s+·\s+(.+)$/i);
+  if (match) return `${match[1]} 次观看 · ${translateDateExpressions(match[2])}`;
+
   match = value.match(/^(.+?)\s+·\s+(.+)$/);
   if (match) {
     const left = translateKnownPhrase(match[1]);
@@ -1286,6 +1376,9 @@ const translateDynamicText = (value) => {
     const translatedRight = right === match[2] ? translateDateExpressions(match[2]) : right;
     if (left !== match[1] || translatedRight !== match[2]) return `${left} · ${translatedRight}`;
   }
+
+  match = value.match(/^(Message|Invite)\s+(.+)$/i);
+  if (match) return `${translateKnownPhrase(match[1])} ${match[2]}`;
 
   match = value.match(/^(.+?)\s+workspace preview for the current brand scope\.$/i);
   if (match) {
@@ -1306,8 +1399,11 @@ const translateDynamicText = (value) => {
   match = value.match(/^([\d,]+) results$/i);
   if (match) return `${match[1]} 条结果`;
 
-  match = value.match(/^([\d,]+) (applications|campaigns|partners|assets|messages|invoices|transactions|results)$/i);
+  match = value.match(/^([\d,]+) (applications|campaigns|partners|assets|messages|invoices|transactions|results|articles|guides)$/i);
   if (match) return `${match[1]} ${countTranslations[match[2].toLowerCase()]}`;
+
+  match = value.match(/^([\d,]+) matching assets?$/i);
+  if (match) return `${match[1]} 个匹配素材`;
 
   match = value.match(/^(\d+) brand terms protected$/i);
   if (match) return `${match[1]} 个品牌词已保护`;
@@ -1381,7 +1477,7 @@ const translateDynamicText = (value) => {
     return `${value.startsWith('Showing') ? '显示' : ''}第 ${match[1]}–${match[2]} ${itemUnit}，共 ${match[3]} ${countTranslations[match[4].toLowerCase()]}`;
   }
 
-  match = value.match(/^(\d+) (applications|campaigns|partners|assets|messages|invoices|transactions|results) in this view$/i);
+  match = value.match(/^(\d+) (applications|campaigns|partners|assets|messages|invoices|transactions|results|articles|guides) in this view$/i);
   if (match) return `${match[1]} ${countTranslations[match[2].toLowerCase()]}`;
 
   match = value.match(/^(\d+) total campaigns$/i);
@@ -1462,8 +1558,15 @@ const translateDynamicText = (value) => {
   match = value.match(/^(Today|Yesterday),\s*(\d{1,2}:\d{2})\s*(AM|PM)$/i);
   if (match) return `${match[1].toLowerCase() === 'today' ? '今天' : '昨天'}，${match[3].toUpperCase() === 'AM' ? '上午' : '下午'} ${match[2]}`;
 
-  match = value.match(/^(Starts|Last edited)\s+(.+)$/i);
-  if (match) return `${match[1].toLowerCase() === 'starts' ? '开始于' : '最后编辑于'} ${translateDateExpressions(match[2])}`;
+  match = value.match(/^(Starts|Last edited|Completed)\s+(.+)$/i);
+  if (match) {
+    const prefix = {
+      starts: '开始于',
+      'last edited': '最后编辑于',
+      completed: '已完成',
+    }[match[1].toLowerCase()];
+    return `${prefix} ${translateDateExpressions(match[2])}`;
+  }
 
   match = value.match(/^(Publisher|Partner) ID:\s*(\d+)$/i);
   if (match) return `${match[1].toLowerCase() === 'publisher' ? '发布者' : '合作伙伴'} ID：${match[2]}`;
