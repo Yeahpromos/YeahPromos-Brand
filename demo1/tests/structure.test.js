@@ -665,6 +665,11 @@ test('日期范围使用页面内日历弹层，避免浏览器原生日历闪�
   assert.match(css, /\.period-picker__popover\s*\{[^}]*transition:\s*none;/s);
 });
 
+test('打开日期范围时保持当前日期按钮的悬停状态', () => {
+  assert.match(css, /\.period-picker__calendar-button:hover,\s*\.period-picker__calendar-button:focus-visible,\s*\.period-picker__calendar-button\[aria-expanded="true"\]\s*\{/s);
+  assert.match(appJs, /trigger\.setAttribute\('aria-expanded', String\(trigger\.dataset\.periodTrigger === field\)\)/);
+});
+
 test('日期弹层支持直接切换月份和年份', () => {
   assert.match(appJs, /data-period-calendar-month-toggle/);
   assert.match(appJs, /data-period-calendar-view="months"/);

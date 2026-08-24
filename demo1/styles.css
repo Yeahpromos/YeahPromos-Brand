@@ -9780,7 +9780,8 @@ body {
 }
 
 .period-picker__calendar-button:hover,
-.period-picker__calendar-button:focus-visible {
+.period-picker__calendar-button:focus-visible,
+.period-picker__calendar-button[aria-expanded="true"] {
   background: #fff1f1;
   color: var(--color-brand);
   outline: none;
