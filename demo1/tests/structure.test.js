@@ -13,6 +13,7 @@ const css = readFileSync(resolve(demoDirectory, 'styles.css'), 'utf8');
 const appJs = readFileSync(resolve(demoDirectory, 'app.js'), 'utf8');
 const operationsRenderers = readFileSync(resolve(demoDirectory, 'operations-renderers.js'), 'utf8');
 const data = readFileSync(resolve(demoDirectory, 'data.js'), 'utf8');
+const localizationSource = readFileSync(resolve(demoDirectory, 'localization.js'), 'utf8');
 const readme = readFileSync(resolve(demoDirectory, 'README.md'), 'utf8');
 const latestPreview = readFileSync(resolve(demoDirectory, 'latest.html'), 'utf8');
 
@@ -78,7 +79,7 @@ test('app entry remains syntactically valid after conflict resolution', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-45"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-54"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
   assert.match(html, /data-module-page/);
@@ -194,43 +195,28 @@ test('Restriction rules keeps its original routed workspace', () => {
   assert.match(readme, /Commission & Rules > Restriction rules/);
 });
 
-test('PPC has its own routed business-rules workspace', () => {
-  assert.match(html, /data-ppc-page/);
-  assert.match(html, />PPC<\/h2>/);
-  assert.match(html, /data-ppc-summary/);
-  assert.match(html, /data-ppc-filter="status"/);
-  assert.match(html, /data-ppc-filter="policy"/);
-  assert.match(html, /data-ppc-filter="channel"/);
-  assert.match(html, /data-ppc-filter="region"/);
-  assert.match(html, /data-ppc-filter="effectiveDate"/);
-  assert.match(html, /data-ppc-search/);
-  assert.match(html, /data-ppc-rows/);
-  assert.match(html, /data-ppc-detail/);
-  assert.match(appJs, /isPpcPage/);
-  assert.match(appJs, /renderPpcPage/);
-  assert.match(appJs, /getFilteredPpcRules/);
-  assert.match(data, /ppcPageData/);
-  assert.match(data, /businessRules/);
-  assert.match(data, /Most specific match wins/);
-  assert.match(readme, /Commission & Rules > PPC/);
+test('Commission & Rules 不再暴露独立的 PPC 页面', () => {
+  assert.doesNotMatch(html, /data-nav-child="ppc"|data-ppc-page|data-ppc-/i);
+  assert.doesNotMatch(appJs, /ppcPage|ppcState|isPpcPage|renderPpcPage|getFilteredPpcRules/i);
+  assert.doesNotMatch(data, /\bppcPageData\b|\bid:\s*['"]ppc['"]\s*,\s*label:\s*['"]PPC['"]/i);
+  assert.doesNotMatch(localizationSource, /(^|\n)\s*ppc:\s*['"]PPC['"]/i);
+  assert.doesNotMatch(css, /is-ppc-page|data-nav-child="ppc"/i);
+  assert.doesNotMatch(readme, /Commission & Rules > PPC/);
+  assert.match(html, /data-restriction-rules-page/);
+  assert.match(data, /restrictionRulesPageData/);
 });
 
-test('Restriction rules and PPC use readable contrast-ready tokens and explicit policy semantics', () => {
+test('Restriction rules use readable contrast-ready tokens and explicit policy semantics', () => {
   assert.match(css, /body\.is-restriction-rules-page[\s\S]*--restriction-rules-text-strong:\s*#1f2937/i);
   assert.match(css, /--restriction-rules-text:\s*#374151/);
   assert.match(css, /--restriction-rules-text-muted:\s*#4b5563/);
   assert.match(css, /nav-child\[data-nav-child="restriction-rules"\][\s\S]*box-shadow:\s*inset 3px 0 0 var\(--restriction-rules-selected-red\)/i);
-  assert.match(css, /body\.is-ppc-page[\s\S]*--restriction-rules-text-strong:\s*#1f2937/i);
-  assert.match(css, /nav-child\[data-nav-child="ppc"\][\s\S]*box-shadow:\s*inset 3px 0 0 var\(--restriction-rules-selected-red\)/i);
   assert.match(css, /\.restriction-rules-table th[\s\S]*font-size:\s*11px/);
   assert.match(css, /\.restriction-rules-table td[\s\S]*font-size:\s*12px/);
   assert.match(css, /\.restriction-rules-policy--blocked[\s\S]*color:\s*#9b1c1c/);
   assert.match(css, /\.restriction-rules-status--active[\s\S]*color:\s*#176b43/);
-  assert.match(html, /Specific match → Block → Review → Allow/);
-  assert.match(appJs, /Violation action/);
-  assert.match(appJs, /Decision priority/);
-  assert.match(readme, /PPC 的关键词\/品牌词/);
-  assert.match(readme, /PPC 使用 `#1F2937`/);
+  assert.match(html, /PPC policy management/);
+  assert.match(data, /Direct-to-site PPC traffic is not permitted for partner links/);
 });
 
 test('balance and payments has its own routed finance page shell', () => {
@@ -573,7 +559,7 @@ test('finance neutral text uses contrast-ready dark gray tokens', () => {
 });
 
 test('page loads one module entry and keeps the global navigation in the sidebar', () => {
-  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-45"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=merchant-reference-54"><\/script>/);
   assert.match(html, /<aside[^>]+data-sidebar/);
   assert.doesNotMatch(html, /<header[^>]*>\s*<nav/i);
 });
@@ -611,6 +597,18 @@ test('overview follows the reference dashboard hierarchy', () => {
   assert.match(css, /\.overview-metric-card::before\s*\{/s);
 });
 
+test('概览排行榜表头为指标列预留完整宽度，避免文字重叠', () => {
+  assert.match(
+    css,
+    /\.overview-ranking-panel \.ranking-table-head,\s*\.overview-ranking-panel \.ranking-row \{\s*grid-template-columns:\s*22px minmax\(0, 1fr\) 48px 88px 84px;/s,
+  );
+  assert.match(css, /\.overview-ranking-panel \.ranking-table-head span \{\s*white-space:\s*nowrap;/s);
+  assert.match(
+    css,
+    /\.overview-ranking-panel \.ranking-row__clicks,\s*\.overview-ranking-panel \.ranking-row__conversions \{\s*text-align:\s*right;/s,
+  );
+});
+
 test('overview interaction surfaces expose staged motion and chart point inspection', () => {
   assert.match(html, /data-overview-reveal="metrics"/);
   assert.match(html, /data-overview-reveal="analytics"/);
@@ -623,8 +621,8 @@ test('overview interaction surfaces expose staged motion and chart point inspect
 });
 
 test('preview busts the entry cache for the reference dashboard skin', () => {
-  assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-32"/);
-  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-45"/);
+  assert.match(html, /href="\.\/styles\.css\?v=merchant-reference-42"/);
+  assert.match(html, /src="\.\/app\.js\?v=merchant-reference-54"/);
 });
 
 test('latest preview resolves main to an immutable RawGitHack commit URL', () => {
@@ -642,8 +640,78 @@ test('reference dashboard keeps flat cards and red action controls', () => {
 });
 
 test('mobile date control stays readable beside the demo state selector', () => {
-  assert.match(css, /\.period-picker__trigger span\s*\{[^}]*white-space:\s*nowrap;/s);
+  assert.match(html, /class="period-picker__fields"/);
+  assert.match(html, /type="text"[^>]+data-period-start[^>]+readonly/);
+  assert.match(html, /type="text"[^>]+data-period-end[^>]+readonly/);
+  assert.match(html, /data-period-popover/);
+  assert.doesNotMatch(html, /type="date"[^>]+data-period-(?:start|end)/);
+  assert.match(appJs, /selectDateRange/);
+  assert.match(css, /\.period-picker__fields\s*\{/s);
+  assert.match(css, /\.period-picker__input\s*\{[\s\S]*height:\s*36px;/s);
   assert.match(css, /\.page-header__actions\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)\s+minmax\(125px, \.62fr\);/s);
+});
+
+test('日期范围使用页面内日历弹层，避免浏览器原生日历闪烁', () => {
+  assert.match(html, /type="text"[^>]+data-period-start[^>]+readonly/);
+  assert.match(html, /type="text"[^>]+data-period-end[^>]+readonly/);
+  assert.match(html, /data-period-trigger="start"/);
+  assert.match(html, /data-period-trigger="end"/);
+  assert.match(html, /data-period-popover/);
+  assert.doesNotMatch(html, /type="date"[^>]+data-period-(?:start|end)/);
+  assert.match(appJs, /const renderPeriodPicker =/);
+  assert.match(appJs, /data-period-calendar-day/);
+  assert.match(appJs, /getPeriodInputDate/);
+  assert.match(appJs, /target\?\.matches\('\[data-no-interaction-pulse\]'\)/);
+  assert.match(css, /\.period-picker__popover\s*\{[^}]*transition:\s*none;/s);
+});
+
+test('日期弹层支持直接切换月份和年份', () => {
+  assert.match(appJs, /data-period-calendar-month-toggle/);
+  assert.match(appJs, /data-period-calendar-view="months"/);
+  assert.match(appJs, /data-period-calendar-view="years"/);
+  assert.match(appJs, /data-period-calendar-month-option/);
+  assert.match(appJs, /data-period-calendar-year-nav/);
+  assert.match(css, /\.period-picker__calendar-month-toggle,\s*\.period-picker__calendar-year-toggle\s*\{/s);
+});
+
+test('日期弹层内部按钮点击不会触发外部关闭逻辑', () => {
+  assert.match(appJs, /periodPopover\?\.addEventListener\('click', \(event\) => \{\s*event\.stopPropagation\(\);/s);
+});
+
+test('概览页在放大后的桌面宽度下不会裁切语言按钮和日期范围', () => {
+  const zoomSafeHeaderCss = css.slice(css.lastIndexOf('/* 放大宽度下的概览页头部控件 */'));
+  assert.match(zoomSafeHeaderCss, /\.page-header__identity,\s*\.page-header__actions,\s*\.page-header__utility,\s*\.page-header__filters\s*\{\s*min-width:\s*0;/s);
+  assert.match(zoomSafeHeaderCss, /\.page-header__utility\s*\{[\s\S]*flex-wrap:\s*wrap;/s);
+  assert.match(zoomSafeHeaderCss, /@media \(min-width: 768px\) and \(max-width: 1439px\)[\s\S]*\.page-header__actions\s*\{[\s\S]*width:\s*min\(484px, 48%\);/s);
+  assert.match(zoomSafeHeaderCss, /@media \(min-width: 768px\) and \(max-width: 1439px\)[\s\S]*\.page-header__actions\s*\{[\s\S]*flex:\s*0 1 484px;/s);
+  assert.doesNotMatch(zoomSafeHeaderCss, /@media \(max-width: 1439px\)[\s\S]*\.page-header\s*\{[\s\S]*flex-wrap:\s*wrap;/s);
+  assert.match(zoomSafeHeaderCss, /@media \(min-width: 768px\) and \(max-width: 1439px\)[\s\S]*\.period-picker\s*\{[\s\S]*min-width:\s*0;/s);
+});
+
+test('日期范围刷新不会重复播放页面入场动画造成闪动', () => {
+  assert.match(appJs, /const renderAll = \(\{ animate = true \} = \{\}\) =>/);
+  assert.match(appJs, /renderMetrics\(\{ animate \}\)/);
+  assert.match(appJs, /renderOverviewChart\(\{ animate \}\)/);
+  assert.match(appJs, /renderOverviewData\(\{ animate: false \}\)/);
+  assert.match(css, /\.metric-card--stable\s*\{[\s\S]*animation:\s*none;[\s\S]*opacity:\s*1;/s);
+});
+
+test('日期输入只刷新概览数据并避免重置自定义日期控件', () => {
+  assert.match(appJs, /const renderOverviewData = \(\{ animate = true \} = \{\}\) =>/);
+  assert.match(appJs, /renderOverviewData\(\{ animate: false \}\)/);
+  assert.match(appJs, /window\.clearTimeout\(periodChangeTimer\)/);
+  assert.match(appJs, /periodChangeTimer = window\.setTimeout\(\(\) =>/);
+  assert.match(appJs, /syncPeriodInput\(periodStartInput, startDate\)/);
+  assert.match(appJs, /syncPeriodInput\(periodEndInput, endDate\)/);
+  assert.match(appJs, /const startDate = getPeriodInputDate\(periodStartInput\)/);
+  assert.match(appJs, /const endDate = getPeriodInputDate\(periodEndInput\)/);
+  assert.match(css, /\.period-picker__input\s*\{[^}]*transition:\s*none;/s);
+  assert.match(css, /\.period-picker__input:focus\s*\{[^}]*box-shadow:\s*none;/s);
+  const dateChangeHandler = appJs.slice(
+    appJs.indexOf('const handlePeriodDateChange'),
+    appJs.indexOf("periodStartInput?.addEventListener('click'"),
+  );
+  assert.doesNotMatch(dateChangeHandler, /renderAll\(/);
 });
 
 test('merchant overview keeps task-oriented navigation and account context', () => {
@@ -747,11 +815,25 @@ test('打开详情抽屉时只同步选中卡片，不重绘父页面', () => {
 });
 
 test('中文模式会统一翻译动态数量、日期、筛选文案和辅助属性', () => {
-  assert.match(appJs, /from '\.\/localization\.js\?v=merchant-reference-45'/);
+  assert.match(appJs, /from '\.\/localization\.js\?v=merchant-reference-51'/);
+  assert.match(appJs, /from '\.\/data\.js\?v=merchant-reference-27'/);
+  assert.match(appJs, /from '\.\/app-core\.js\?v=merchant-reference-19'/);
   assert.equal(localization.translateText('zh-CN', 'Showing 1 to 5 of 7 results'), '显示第 1–5 条，共 7 条结果');
   assert.equal(localization.translateText('zh-CN', '1 – 12 of 48 assets'), '第 1–12 项，共 48 个素材');
   assert.equal(localization.translateText('zh-CN', 'Updated May 08, 2025'), '更新于 2025 年 5 月 8 日');
   assert.equal(localization.translateText('zh-CN', 'Search by name or keyword'), '按名称或关键词搜索');
+  assert.equal(localization.translateText('zh-CN', 'Date range'), '日期范围');
+  assert.equal(localization.translateText('zh-CN', 'Date range updated'), '日期范围已更新');
+  assert.equal(localization.translateText('zh-CN', 'Previous month'), '上个月');
+  assert.equal(localization.translateText('zh-CN', 'Next month'), '下个月');
+  assert.equal(localization.translateText('zh-CN', 'Previous year'), '上一年');
+  assert.equal(localization.translateText('zh-CN', 'Next year'), '下一年');
+  assert.equal(localization.translateText('zh-CN', 'Clear'), '清除');
+  assert.equal(localization.translateText('zh-CN', 'Today'), '今天');
+  assert.equal(localization.translateAttribute('zh-CN', 'Start date'), '开始日期');
+  assert.equal(localization.translateAttribute('zh-CN', 'End date'), '结束日期');
+  assert.equal(localization.translateAttribute('zh-CN', 'Date picker'), '日期选择器');
+  assert.equal(localization.translateAttribute('zh-CN', 'Select date'), '选择日期');
   assert.equal(localization.translateText('zh-CN', 'All statuses'), '全部状态');
   assert.equal(localization.translateText('zh-CN', 'TikTok'), 'TikTok');
   assert.equal(localization.translateText('zh-CN', 'Allow'), '允许');
@@ -842,6 +924,112 @@ test('中文模式会完整翻译动态页面短语而不是留下半句英文',
     '12 applications need review': '12 个申请待审核',
     '+12.6% vs previous period': '较上一周期 +12.6%',
     '1.2M monthly visits': '1.2M 月访问量',
+  };
+
+  Object.entries(cases).forEach(([source, expected]) => {
+    assert.equal(localization.translateText('zh-CN', source), expected, source);
+  });
+});
+
+test('中文模式的右侧详情抽屉不会残留英文文案', () => {
+  assert.match(appJs, /translateText\(locale, 'Partnership opportunity from YeahPromos'\)/);
+  const cases = {
+    'Close partner details': '关闭合作伙伴详情',
+    'Relationship summary': '关系摘要',
+    'Tracked commission': '跟踪佣金',
+    'Partner profile': '合作伙伴资料',
+    'View performance': '查看表现',
+    'Affiliate program': '联盟计划',
+    'Influencer campaign': '影响者活动',
+    'Program rhythm': '计划节奏',
+    'Healthy partner activity': '合作伙伴活动健康',
+    'Program pulse': '计划动态',
+    'Campaign pulse': '活动动态',
+    'Commission rate': '佣金比例',
+    'Program details': '计划详情',
+    'Delivery snapshot': '交付概览',
+    'Activity signal': '活动信号',
+    'Related content': '相关内容',
+    'Keep browsing': '继续浏览',
+    'Manage program': '管理计划',
+    'Message Alpha Media': '消息 Alpha Media',
+    'Invite Alpha Media': '邀请 Alpha Media',
+    Subject: '主题',
+    'Partner email': '合作伙伴邮箱',
+    'Partnership opportunity from YeahPromos': '来自 YeahPromos 的合作机会',
+    'Personal note': '个性化备注',
+    'Write a clear next step for this partner.': '为该合作伙伴写下清晰的下一步。',
+    'Add context to make the invitation feel personal.': '补充背景信息，让邀请更具个性。',
+    'Send message': '发送消息',
+    'Send invitation': '发送邀请',
+    'Relationship snapshot': '关系概览',
+    'Delivery plan': '交付计划',
+    'Budget allocated': '已分配预算',
+    Creators: '创作者',
+    Deliverables: '交付项',
+    Flight: '活动周期',
+    'Related videos': '相关视频',
+    'Open campaign workspace': '打开活动工作区',
+    '18.4K views · May 06': '18.4K 次观看 · 5 月 6 日',
+    Source: '来源',
+    Submitted: '提交时间',
+    new: '新申请',
+    'under-review': '审核中',
+    approved: '已批准',
+    declined: '已拒绝',
+    Target: '目标',
+    'Campaign snapshot': '活动概览',
+    'Search assets by name or tag...': '按名称或标签搜索素材…',
+    'No assets found': '未找到素材',
+    'Try another category, folder, status, or search term.': '请尝试其他分类、文件夹、状态或搜索词。',
+    'Select an asset': '选择素材',
+    'Choose an asset from the library to review its details.': '从素材库选择一个素材以查看详情。',
+    '0 matching assets': '0 个匹配素材',
+    'Selected asset': '已选素材',
+    'Open asset preview': '打开素材预览',
+    'Close asset details': '关闭素材详情',
+    'More asset actions': '更多素材操作',
+    'Find answers, learn best practices, and get the support you need.': '查找答案、了解最佳实践，并获得所需支持。',
+    'Search help articles': '搜索帮助文章',
+    'Press / to search': '按 / 搜索',
+    '12 articles': '12 篇文章',
+    '5 guides': '5 篇指南',
+    'Contact support': '联系支持',
+    'Can’t find what you’re looking for?': '找不到你要查找的内容？',
+    'Our support team is here to help.': '我们的支持团队随时为你提供帮助。',
+    'Our support hours': '支持时间',
+    'Mon – Fri, 9:00 AM – 6:00 PM (UTC)': '周一至周五，上午 9:00–下午 6:00（UTC）',
+    'View my support tickets': '查看我的支持工单',
+    'Popular articles': '热门文章',
+    'Start with the answers other merchants use most.': '先从其他商家最常使用的答案开始。',
+    'View all articles': '查看所有文章',
+    'Load more articles': '加载更多文章',
+    'System status': '系统状态',
+    'All systems operational': '所有系统运行正常',
+    'Everything is running smoothly.': '一切运行顺畅。',
+    'Partner Dashboard': '合作伙伴控制台',
+    'Email Delivery': '邮件发送',
+    'Payment Processing': '付款处理',
+    Operational: '运行正常',
+    'View status page': '查看状态页',
+    'No help articles found': '未找到帮助文章',
+    'Try a different search term or browse a help category.': '请尝试其他搜索词或浏览帮助分类。',
+    'Getting started with YeahPromos': 'YeahPromos 入门指南',
+    'A step-by-step guide to set up your merchant account and launch your first program.': '分步指导你设置商家账户并启动第一个计划。',
+    'How to create an affiliate program': '如何创建联盟计划',
+    'Learn how to configure program settings, commission plans, and partner terms.': '了解如何配置计划设置、佣金方案和合作伙伴条款。',
+    'Review and approve partner applications': '审核并批准合作伙伴申请',
+    'How to review, approve, or decline applications from potential partners.': '了解如何审核、批准或拒绝潜在合作伙伴的申请。',
+    'Understanding commissions and payouts': '了解佣金与付款',
+    'Learn how commissions are calculated, payouts are scheduled, and payment methods work.': '了解佣金如何计算、付款如何排期以及付款方式如何运作。',
+    'Generate and export performance reports': '生成并导出表现报告',
+    'Create custom reports to track clicks, conversions, and earnings.': '创建自定义报告，跟踪点击量、转化次数和收益。',
+    'Invite your first partner': '邀请你的第一位合作伙伴',
+    'Use partner discovery and invitations to build your first partner pipeline.': '使用合作伙伴发现和邀请功能，建立你的第一批合作伙伴线索。',
+    'Connect your store and verify tracking': '连接店铺并验证跟踪',
+    'Check your store connection, tracking provider, and first conversion signals.': '检查店铺连接、跟踪服务商和首批转化信号。',
+    'Read your performance dashboard': '阅读表现概览',
+    'Understand the metrics that explain partner activity, sales, and commission health.': '了解反映合作伙伴活动、销售和佣金健康度的指标。',
   };
 
   Object.entries(cases).forEach(([source, expected]) => {

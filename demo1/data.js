@@ -101,9 +101,9 @@ export const dashboardData = {
     timezone: 'America/Los_Angeles',
   },
   periods: [
-    { id: '7d', label: 'May 05 – May 12, 2025', shortLabel: 'Last 7 days', snapshot: sevenDaySnapshot },
-    { id: '30d', label: 'Apr 13 – May 12, 2025', shortLabel: 'Last 30 days', snapshot: thirtyDaySnapshot },
-    { id: '90d', label: 'Feb 12 – May 12, 2025', shortLabel: 'Last 90 days', snapshot: ninetyDaySnapshot },
+    { id: '7d', startDate: '2025-05-05', endDate: '2025-05-12', label: 'May 05 – May 12, 2025', shortLabel: 'Last 7 days', snapshot: sevenDaySnapshot },
+    { id: '30d', startDate: '2025-04-13', endDate: '2025-05-12', label: 'Apr 13 – May 12, 2025', shortLabel: 'Last 30 days', snapshot: thirtyDaySnapshot },
+    { id: '90d', startDate: '2025-02-12', endDate: '2025-05-12', label: 'Feb 12 – May 12, 2025', shortLabel: 'Last 90 days', snapshot: ninetyDaySnapshot },
   ],
   navigation: [
     { id: 'overview', label: 'Overview', icon: 'grid' },
@@ -148,7 +148,6 @@ export const dashboardData = {
         { id: 'commission-rules-list', label: 'Commission rules' },
         { id: 'attribution-rules', label: 'Attribution rules' },
         { id: 'restriction-rules', label: 'Restriction rules' },
-        { id: 'ppc', label: 'PPC' },
       ],
     },
     {
@@ -1021,32 +1020,6 @@ export const restrictionRulesPageData = {
         'Partners must use approved non-brand keywords for paid search',
       ],
     },
-  },
-};
-
-export const ppcPageData = {
-  ...restrictionRulesPageData,
-  rules: restrictionRulesPageData.rules.map((rule) => ({
-    ...rule,
-    matchType: rule.matchType ?? (rule.policy === 'Block' ? 'Exact + phrase match' : rule.policy === 'Allow' ? 'Broad + phrase match' : 'Phrase match'),
-    violationAction: rule.violationAction ?? (rule.policy === 'Block' ? 'Block traffic and notify partner' : rule.policy === 'Review' ? 'Hold for merchant review' : 'Record and monitor traffic'),
-  })),
-  details: {
-    ...restrictionRulesPageData.details,
-    'brand-search-protection': {
-      ...restrictionRulesPageData.details['brand-search-protection'],
-      matchType: 'Exact + phrase match',
-      violationAction: 'Block traffic and notify partner',
-    },
-  },
-  businessRules: {
-    precedence: [
-      { title: 'Most specific match wins', description: 'Partner + campaign + region rules override broader channel or global rules.' },
-      { title: 'Block overrides Allow', description: 'At the same scope, a Block decision wins over Allow; Review pauses final approval.' },
-      { title: 'Undefined brand terms default to Block', description: 'New brand and competitor terms are protected until a merchant explicitly allows them.' },
-      { title: 'Escalate evidence gaps', description: 'Missing landing-page or keyword evidence is Review, never an automatic approval.' },
-    ],
-    audit: 'Each decision stores the keyword, channel, region, partner, landing page, rule ID, action, and timestamp.',
   },
 };
 

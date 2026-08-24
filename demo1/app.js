@@ -1,11 +1,11 @@
-import { apiCredentialsPageData, attributionPageData, bannersImagesPageData, brandIntegrationPageData, campaignPageData, commissionInvoicesPageData, commissionRulesPageData, couponAttributionPageData, couponsPageData, dashboardData, financeBalancePageData, helpCenterPageData, messagesPageData, ppcPageData, recruitmentPageSettingsData, restrictionRulesPageData, teamAccountsPageData, transactionHistoryPageData } from './data.js?v=merchant-reference-25';
+import { apiCredentialsPageData, attributionPageData, bannersImagesPageData, brandIntegrationPageData, campaignPageData, commissionInvoicesPageData, commissionRulesPageData, couponAttributionPageData, couponsPageData, dashboardData, financeBalancePageData, helpCenterPageData, messagesPageData, recruitmentPageSettingsData, restrictionRulesPageData, teamAccountsPageData, transactionHistoryPageData } from './data.js?v=merchant-reference-27';
 import {
   createDashboardState,
   isNavigationItemActive,
   selectDemoState,
-  selectPeriod,
+  selectDateRange,
   toggleNavigationGroup,
-} from './app-core.js?v=merchant-reference-18';
+} from './app-core.js?v=merchant-reference-19';
 import {
   applyRecruitmentAction,
   clearRecruitmentCriterion,
@@ -59,9 +59,11 @@ import {
   bindLanguageToggle,
   getLocale,
   translate,
+  translateAttribute,
   translateNavigationLabel,
   translatePageTitle,
-} from './localization.js?v=merchant-reference-45';
+  translateText,
+} from './localization.js?v=merchant-reference-51';
 import {
   closeHeaderActionPanel,
   createHeaderActionState,
@@ -91,6 +93,8 @@ let operationsState = createOperationsState();
 let targetState = createTargetState();
 let headerActionState = createHeaderActionState();
 let toastTimer;
+let periodChangeTimer;
+let periodPickerState = { field: null, viewDate: null, selectionView: 'calendar' };
 let lastDrawerTrigger = null;
 let recruitmentDrawerRecordId = null;
 let campaignSupportDrawerPageId = null;
@@ -115,9 +119,10 @@ const pageTitle = document.querySelector('[data-page-title]');
 const pageDescription = document.querySelector('[data-page-description]');
 const breadcrumbParent = document.querySelector('[data-breadcrumb-parent]');
 const breadcrumbCurrent = document.querySelector('[data-breadcrumb-current]');
-const periodToggle = document.querySelector('[data-period-toggle]');
-const periodMenu = document.querySelector('[data-period-menu]');
-const periodLabel = document.querySelector('[data-period-label]');
+const periodPicker = document.querySelector('[data-period-picker]');
+const periodPopover = document.querySelector('[data-period-popover]');
+const periodStartInput = document.querySelector('[data-period-start]');
+const periodEndInput = document.querySelector('[data-period-end]');
 const drawer = document.querySelector('[data-drawer]');
 const drawerContent = document.querySelector('[data-drawer-content]');
 const drawerBackdrop = document.querySelector('[data-drawer-backdrop]');
@@ -171,14 +176,6 @@ const restrictionRulesSearch = document.querySelector('[data-restriction-rules-s
 const restrictionRulesSelectAll = document.querySelector('[data-restriction-rules-select-all]');
 const restrictionRulesResultCount = document.querySelector('[data-restriction-rules-result-count]');
 const restrictionRulesDetail = document.querySelector('[data-restriction-rules-detail]');
-const ppcPage = document.querySelector('[data-ppc-page]');
-const ppcActions = document.querySelector('[data-ppc-actions]');
-const ppcSummary = document.querySelector('[data-ppc-summary]');
-const ppcRows = document.querySelector('[data-ppc-rows]');
-const ppcSearch = document.querySelector('[data-ppc-search]');
-const ppcSelectAll = document.querySelector('[data-ppc-select-all]');
-const ppcResultCount = document.querySelector('[data-ppc-result-count]');
-const ppcDetail = document.querySelector('[data-ppc-detail]');
 const financePage = document.querySelector('[data-finance-page]');
 const financeActions = document.querySelector('[data-finance-actions]');
 const financeSummary = document.querySelector('[data-finance-summary]');
@@ -339,19 +336,6 @@ const restrictionRulesState = {
     effectiveDate: 'all',
   },
   selectedIds: new Set([restrictionRulesPageData.selectedRuleId]),
-};
-
-const ppcState = {
-  search: '',
-  selectedRuleId: ppcPageData.selectedRuleId,
-  filters: {
-    status: 'all',
-    policy: 'all',
-    channel: 'all',
-    region: 'all',
-    effectiveDate: 'all',
-  },
-  selectedIds: new Set([ppcPageData.selectedRuleId]),
 };
 
 const financeState = {
@@ -549,23 +533,42 @@ const renderNavigation = () => {
     .join('');
 };
 
+const parsePeriodDate = (value) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value ?? '')) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (
+    date.getUTCFullYear() !== year
+    || date.getUTCMonth() !== month - 1
+    || date.getUTCDate() !== day
+  ) return null;
+  return date;
+};
+
+const formatPeriodDateValue = (date) => [
+  date.getUTCFullYear(),
+  String(date.getUTCMonth() + 1).padStart(2, '0'),
+  String(date.getUTCDate()).padStart(2, '0'),
+].join('-');
+
+const formatPeriodInputValue = (value) => parsePeriodDate(value) ? value.replaceAll('-', '/') : '';
+
+const getPeriodInputDate = (input) => input?.dataset.periodValue ?? '';
+
+const syncPeriodInput = (input, value) => {
+  if (!input) return;
+  const normalizedValue = parsePeriodDate(value) ? value : '';
+  const displayValue = formatPeriodInputValue(normalizedValue);
+  if (input.dataset.periodValue !== normalizedValue) input.dataset.periodValue = normalizedValue;
+  if (input.value !== displayValue) input.value = displayValue;
+};
+
 const renderPeriods = () => {
   const selectedPeriod = state.periods.find((period) => period.id === state.selectedPeriod);
-  periodLabel.textContent = selectedPeriod?.label ?? 'Select a period';
-  periodMenu.innerHTML = state.periods
-    .map(
-      (period) => `
-        <button
-          class="period-option${period.id === state.selectedPeriod ? ' is-selected' : ''}"
-          type="button"
-          data-period="${period.id}"
-        >
-          <span>${period.label}</span>
-          <small>${period.shortLabel}</small>
-        </button>
-      `,
-    )
-    .join('');
+  const startDate = state.selectedStartDate ?? selectedPeriod?.startDate ?? '';
+  const endDate = state.selectedEndDate ?? selectedPeriod?.endDate ?? '';
+  syncPeriodInput(periodStartInput, startDate);
+  syncPeriodInput(periodEndInput, endDate);
 };
 
 const renderOverviewSparkline = (values = []) => {
@@ -584,14 +587,14 @@ const renderOverviewSparkline = (values = []) => {
   return `<svg class="overview-metric__sparkline" viewBox="0 0 ${width} ${height}" aria-hidden="true"><path d="M${points.join(' L')}" /></svg>`;
 };
 
-const renderMetrics = () => {
+const renderMetrics = ({ animate = true } = {}) => {
   const snapshot = getOverviewSnapshot(state.selectedPeriod);
   const isEmpty = state.demoState === 'empty';
   metricsGrid.innerHTML = snapshot.metrics
     .map(
       (metric) => `
         <button
-          class="metric-card overview-metric-card${overviewState.selectedMetric === metric.id ? ' is-chart-selected' : ''}"
+          class="metric-card overview-metric-card${overviewState.selectedMetric === metric.id ? ' is-chart-selected' : ''}${animate ? '' : ' metric-card--stable'}"
           type="button"
           data-metric-id="${metric.id}"
           data-overview-metric="${metric.id}"
@@ -760,8 +763,9 @@ const formatOverviewChartValue = (value, metricId) => {
 
 const replayOverviewChartTransition = (chartSurface) => {
   if (!chartSurface) return;
+  window.cancelAnimationFrame(overviewChartTransitionFrame);
   chartSurface.classList.remove('overview-chart--transitioning');
-  requestAnimationFrame(() => chartSurface.classList.add('overview-chart--transitioning'));
+  overviewChartTransitionFrame = requestAnimationFrame(() => chartSurface.classList.add('overview-chart--transitioning'));
 };
 
 const showOverviewPointTooltip = (pointTrigger) => {
@@ -830,7 +834,28 @@ const setupOverviewMotion = () => {
   revealNodes.forEach((node) => observer.observe(node));
 };
 
-const renderOverviewChart = () => {
+const formatOverviewDateRange = (startDate, endDate, fallback) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return fallback;
+  const start = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+  if (Number.isNaN(start.valueOf()) || Number.isNaN(end.valueOf())) return fallback;
+
+  const format = (date) => new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: '2-digit',
+    timeZone: 'UTC',
+  }).format(date);
+  const startYear = start.getUTCFullYear();
+  const endYear = end.getUTCFullYear();
+
+  return startYear === endYear
+    ? `${format(start)} – ${format(end)}, ${endYear}`
+    : `${format(start)}, ${startYear} – ${format(end)}, ${endYear}`;
+};
+
+let overviewChartTransitionFrame;
+
+const renderOverviewChart = ({ animate = true } = {}) => {
   const snapshot = getOverviewSnapshot(state.selectedPeriod);
   const chart = getOverviewChart(overviewState, state.selectedPeriod);
   const tabs = document.querySelector('[data-overview-chart-tabs]');
@@ -851,14 +876,24 @@ const renderOverviewChart = () => {
       .join('');
   }
 
-  if (range) range.textContent = snapshot.rangeLabel;
-  if (period) period.textContent = snapshot.rangeLabel;
+  const selectedRangeLabel = formatOverviewDateRange(
+    state.selectedStartDate,
+    state.selectedEndDate,
+    snapshot.rangeLabel,
+  );
+  if (range) range.textContent = selectedRangeLabel;
+  if (period) period.textContent = selectedRangeLabel;
   if (cadence) cadence.value = overviewState.cadence;
 
   if (state.demoState === 'empty') {
     if (chartSurface) {
       chartSurface.innerHTML = '<div class="overview-chart__empty"><strong>No activity in this date range</strong><span>Try a wider date range to see performance trends.</span></div>';
-      replayOverviewChartTransition(chartSurface);
+      if (animate) {
+        replayOverviewChartTransition(chartSurface);
+      } else {
+        window.cancelAnimationFrame(overviewChartTransitionFrame);
+        chartSurface.classList.remove('overview-chart--transitioning');
+      }
     }
     return;
   }
@@ -895,7 +930,12 @@ const renderOverviewChart = () => {
     <div class="overview-chart__tooltip" data-overview-chart-tooltip hidden role="status" aria-live="polite"></div>
     <div class="overview-chart__legend"><i></i><span>${chart.label}</span></div>
   `;
-  replayOverviewChartTransition(chartSurface);
+  if (animate) {
+    replayOverviewChartTransition(chartSurface);
+  } else {
+    window.cancelAnimationFrame(overviewChartTransitionFrame);
+    chartSurface.classList.remove('overview-chart--transitioning');
+  }
 };
 
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
@@ -905,6 +945,162 @@ const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character
   '"': '&quot;',
   "'": '&#39;',
 }[character]));
+
+const getPeriodInput = (field) => field === 'end' ? periodEndInput : periodStartInput;
+
+const getPeriodTodayValue = () => {
+  const today = new Date();
+  return formatPeriodDateValue(new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())));
+};
+
+const getPeriodMonthLabel = (date) => {
+  if (getLocale() === 'zh-CN') {
+    return `${String(date.getUTCMonth() + 1).padStart(2, '0')}月`;
+  }
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    timeZone: 'UTC',
+  }).format(date);
+};
+
+const renderPeriodPicker = () => {
+  if (!periodPopover) return;
+
+  const field = periodPickerState.field ?? 'start';
+  const input = getPeriodInput(field);
+  const selectedValue = getPeriodInputDate(input);
+  const selectedDate = parsePeriodDate(selectedValue)
+    ?? parsePeriodDate(state.selectedStartDate ?? '')
+    ?? new Date();
+  const selectionView = ['calendar', 'months', 'years'].includes(periodPickerState.selectionView)
+    ? periodPickerState.selectionView
+    : 'calendar';
+  const viewDate = periodPickerState.viewDate instanceof Date
+    ? periodPickerState.viewDate
+    : new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), 1));
+  const monthStart = new Date(Date.UTC(viewDate.getUTCFullYear(), viewDate.getUTCMonth(), 1));
+  const year = monthStart.getUTCFullYear();
+  const month = monthStart.getUTCMonth();
+  const firstWeekday = (monthStart.getUTCDay() + 6) % 7;
+  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  const cellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+  const locale = getLocale();
+  const monthLabel = getPeriodMonthLabel(monthStart);
+  const yearLabel = locale === 'zh-CN' ? `${year}年` : String(year);
+  const navigationAttribute = selectionView === 'calendar'
+    ? 'data-period-calendar-nav'
+    : 'data-period-calendar-year-nav';
+  const navigationLabel = selectionView === 'calendar'
+    ? ['Previous month', 'Next month']
+    : ['Previous year', 'Next year'];
+  const weekdayLabels = locale === 'zh-CN'
+    ? ['一', '二', '三', '四', '五', '六', '日']
+    : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const selectDateLabel = translateAttribute(locale, 'Select date');
+  const todayValue = getPeriodTodayValue();
+  const cells = Array.from({ length: cellCount }, (_, index) => {
+    const date = new Date(Date.UTC(year, month, index - firstWeekday + 1));
+    const value = formatPeriodDateValue(date);
+    const isOutsideMonth = date.getUTCMonth() !== month;
+    const isSelected = value === selectedValue;
+    const isToday = value === todayValue;
+    const classes = [
+      'period-picker__calendar-day',
+      isOutsideMonth ? 'period-picker__calendar-day--outside' : '',
+      isSelected ? 'period-picker__calendar-day--selected' : '',
+      isToday ? 'period-picker__calendar-day--today' : '',
+    ].filter(Boolean).join(' ');
+    return `<button class="${classes}" type="button" data-period-calendar-day="${value}" data-no-interaction-pulse aria-label="${escapeHtml(`${selectDateLabel} ${value}`)}" aria-pressed="${isSelected}">${date.getUTCDate()}</button>`;
+  }).join('');
+
+  const monthOptions = Array.from({ length: 12 }, (_, monthIndex) => {
+    const optionDate = new Date(Date.UTC(year, monthIndex, 1));
+    const isSelected = monthIndex === month;
+    return `<button class="period-picker__calendar-option${isSelected ? ' period-picker__calendar-option--selected' : ''}" type="button" data-period-calendar-month-option="${monthIndex}" data-no-interaction-pulse aria-pressed="${isSelected}">${escapeHtml(getPeriodMonthLabel(optionDate))}</button>`;
+  }).join('');
+  const firstYear = year - 5;
+  const yearOptions = Array.from({ length: 12 }, (_, index) => {
+    const optionYear = firstYear + index;
+    const isSelected = optionYear === year;
+    return `<button class="period-picker__calendar-option${isSelected ? ' period-picker__calendar-option--selected' : ''}" type="button" data-period-calendar-year-option="${optionYear}" data-no-interaction-pulse aria-pressed="${isSelected}">${optionYear}</button>`;
+  }).join('');
+  const calendarBody = `
+    <div class="period-picker__calendar-weekdays" role="row">
+      ${weekdayLabels.map((label) => `<span role="columnheader">${label}</span>`).join('')}
+    </div>
+    <div class="period-picker__calendar-grid" role="grid">
+      ${cells}
+    </div>
+    <div class="period-picker__calendar-footer">
+      <button class="period-picker__calendar-action" type="button" data-period-calendar-action="clear" data-no-interaction-pulse>${escapeHtml(translateText(locale, 'Clear'))}</button>
+      <button class="period-picker__calendar-action" type="button" data-period-calendar-action="today" data-no-interaction-pulse>${escapeHtml(translateText(locale, 'Today'))}</button>
+    </div>
+  `;
+  const selectionBody = selectionView === 'months'
+    ? `<div class="period-picker__calendar-selection-grid" role="grid">${monthOptions}</div>`
+    : `<div class="period-picker__calendar-selection-grid" role="grid">${yearOptions}</div>`;
+  const monthToggle = `<button class="period-picker__calendar-month-toggle" type="button" data-period-calendar-month-toggle data-period-calendar-view="months" data-no-interaction-pulse aria-expanded="${selectionView === 'months'}">${escapeHtml(monthLabel)}</button>`;
+  const yearToggle = `<button class="period-picker__calendar-year-toggle" type="button" data-period-calendar-year-toggle data-period-calendar-view="years" data-no-interaction-pulse aria-expanded="${selectionView === 'years'}">${escapeHtml(yearLabel)}</button>`;
+  const calendarHeading = locale === 'zh-CN' ? `${yearToggle}${monthToggle}` : `${monthToggle}${yearToggle}`;
+
+  periodPickerState.viewDate = monthStart;
+  periodPopover.hidden = true;
+  periodPopover.innerHTML = `
+    <div class="period-picker__calendar-header">
+      <button class="period-picker__calendar-nav" type="button" ${navigationAttribute}="-1" data-no-interaction-pulse aria-label="${escapeHtml(translateText(locale, navigationLabel[0]))}">‹</button>
+      <div class="period-picker__calendar-heading">
+        ${calendarHeading}
+      </div>
+      <button class="period-picker__calendar-nav" type="button" ${navigationAttribute}="1" data-no-interaction-pulse aria-label="${escapeHtml(translateText(locale, navigationLabel[1]))}">›</button>
+    </div>
+    ${selectionView === 'calendar' ? calendarBody : selectionBody}
+  `;
+  periodPopover.hidden = false;
+};
+
+const openPeriodPicker = (field) => {
+  const input = getPeriodInput(field);
+  const selectedDate = parsePeriodDate(getPeriodInputDate(input))
+    ?? parsePeriodDate(state.selectedStartDate ?? '')
+    ?? new Date();
+  periodPickerState = {
+    field,
+    viewDate: new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), 1)),
+    selectionView: 'calendar',
+  };
+  periodPicker?.setAttribute('data-open', 'true');
+  document.querySelectorAll('[data-period-trigger]').forEach((trigger) => {
+    trigger.setAttribute('aria-expanded', String(trigger.dataset.periodTrigger === field));
+  });
+  renderPeriodPicker();
+};
+
+const closePeriodPicker = () => {
+  if (periodPopover) periodPopover.hidden = true;
+  periodPicker?.removeAttribute('data-open');
+  document.querySelectorAll('[data-period-trigger]').forEach((trigger) => {
+    trigger.setAttribute('aria-expanded', 'false');
+  });
+  periodPickerState = { field: null, viewDate: null, selectionView: 'calendar' };
+};
+
+const commitPeriodPickerValue = (value) => {
+  const input = getPeriodInput(periodPickerState.field);
+  if (!input) return;
+  syncPeriodInput(input, value);
+  closePeriodPicker();
+  handlePeriodDateChange();
+};
+
+const handlePeriodPickerKeydown = (event, field) => {
+  if (event.key === 'Escape') {
+    closePeriodPicker();
+    return;
+  }
+  if (!['Enter', ' '].includes(event.key)) return;
+  event.preventDefault();
+  openPeriodPicker(field);
+};
 
 const recruitmentPageSet = new Set(recruitmentPageIds);
 const operationsPageSet = new Set(operationsPageIds);
@@ -2103,8 +2299,6 @@ const filterRules = (pageData, rulesState) => {
       rule.channel,
       rule.region,
       rule.partnerScope,
-      rule.matchType,
-      rule.violationAction,
       rule.status,
     ].some((value) => String(value ?? '').toLowerCase().includes(normalizedSearch));
     const matchesStatus = filters.status === 'all' || rule.status === filters.status;
@@ -2195,7 +2389,7 @@ const renderRulesRows = ({ pageData, rulesState, rows, resultCount, selectAll, p
   updateRulesSelection(filteredRules, rulesState, selectAll);
 };
 
-const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, prefix, variant }) => {
+const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, prefix }) => {
   if (!detailTarget) return;
 
   const rule = pageData.rules.find((item) => item.id === rulesState.selectedRuleId);
@@ -2206,7 +2400,6 @@ const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, pre
     return;
   }
 
-  const isPpc = variant === 'ppc';
   const detail = pageData.details[rule.id] ?? {
     description: `Applies a ${rule.policy.toLowerCase()} policy to ${rule.termsSummary.toLowerCase()} for ${rule.partnerScope.toLowerCase()}.`,
     enforcement: rule.policy === 'Block' ? 'Block and review' : rule.policy === 'Review' ? 'Review before approval' : 'Allow when conditions pass',
@@ -2214,27 +2407,12 @@ const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, pre
     channels: [rule.channel],
     regions: rule.region,
     partnerScope: rule.partnerScope,
-    matchType: rule.matchType ?? 'Exact and phrase match',
-    violationAction: rule.violationAction ?? (rule.policy === 'Block' ? 'Block traffic and notify partner' : 'Record for policy review'),
     effectiveDate: rule.effectiveDate,
     lastUpdated: rule.lastUpdated,
     updatedBy: 'Demo Admin',
     violations: 'No flagged violations',
     conditions: ['Applies only to the selected channel and region scope', 'Partner traffic is checked before attribution is applied'],
   };
-  const enhancedFacts = isPpc ? `
-      <div><span>Match type</span><strong>${escapeHtml(detail.matchType)}</strong></div>
-      <div><span>Violation action</span><strong>${escapeHtml(detail.violationAction)}</strong></div>` : '';
-  const businessRuleSections = isPpc && pageData.businessRules ? `
-    <section class="restriction-rules-detail__section restriction-rules-priority">
-      <div class="restriction-rules-detail__section-header"><div><h3>Decision priority</h3><p>Apply the policy in this order when rules overlap.</p></div></div>
-      <ol>${pageData.businessRules.precedence.map((item, index) => `<li><span>${index + 1}</span><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.description)}</p></div></li>`).join('')}</ol>
-    </section>
-
-    <section class="restriction-rules-detail__audit">
-      <span class="restriction-rules-detail__audit-icon">${icon('shield')}</span>
-      <div><strong>Audit evidence</strong><p>${escapeHtml(pageData.businessRules.audit)}</p></div>
-    </section>` : '';
   const attribute = (name) => `data-${prefix}-${name}`;
 
   detailTarget.hidden = false;
@@ -2242,11 +2420,11 @@ const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, pre
   detailTarget.innerHTML = `
     <div class="restriction-rules-detail__header">
       <div>
-        <span class="eyebrow">${isPpc ? 'Selected PPC rule' : 'Selected restriction'}</span>
-        <h2 id="${isPpc ? 'ppc-detail-title' : 'restriction-rules-detail-title'}">${escapeHtml(rule.name)}</h2>
+        <span class="eyebrow">Selected restriction</span>
+        <h2 id="restriction-rules-detail-title">${escapeHtml(rule.name)}</h2>
         <p>${escapeHtml(rule.ruleId)}</p>
       </div>
-      <button class="icon-button" type="button" ${attribute('action')}="close-detail" aria-label="Close ${isPpc ? 'PPC' : 'restriction rule'} details">${icon('x')}</button>
+      <button class="icon-button" type="button" ${attribute('action')}="close-detail" aria-label="Close restriction rule details">${icon('x')}</button>
     </div>
     <p class="restriction-rules-detail__description">${escapeHtml(detail.description)}</p>
 
@@ -2256,7 +2434,6 @@ const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, pre
       <div><span>Channels</span><strong>${detail.channels.map((channel) => escapeHtml(channel)).join(', ')}</strong></div>
       <div><span>Regions</span><strong>${escapeHtml(detail.regions)}</strong></div>
       <div><span>Partner scope</span><strong>${escapeHtml(detail.partnerScope)}</strong></div>
-      ${enhancedFacts}
       <div><span>Effective date</span><strong>${escapeHtml(detail.effectiveDate)}</strong></div>
       <div><span>Last updated</span><strong>${escapeHtml(detail.lastUpdated)} by ${escapeHtml(detail.updatedBy)}</strong></div>
     </div>
@@ -2275,8 +2452,6 @@ const renderRulesDetail = ({ pageData, rulesState, detailTarget, pageTarget, pre
       <div class="restriction-rules-detail__section-header"><div><h3>Rule conditions</h3></div><button type="button" class="restriction-rules-detail__edit" ${attribute('action')}="edit-conditions">Edit</button></div>
       <ul>${detail.conditions.map((condition) => `<li>${escapeHtml(condition)}</li>`).join('')}</ul>
     </section>
-
-    ${businessRuleSections}
 
     <section class="restriction-rules-detail__section restriction-rules-enforcement">
       <div class="restriction-rules-detail__section-header"><div><h3>Enforcement activity</h3><p>Recent policy checks for this rule.</p></div><button type="button" class="restriction-rules-detail__edit" ${attribute('action')}="view-violations">View all</button></div>
@@ -2310,7 +2485,6 @@ const renderRestrictionRulesDetail = () => renderRulesDetail({
   detailTarget: restrictionRulesDetail,
   pageTarget: restrictionRulesPage,
   prefix: 'restriction-rules',
-  variant: 'restriction',
 });
 
 const renderRestrictionRulesPage = () => {
@@ -2318,38 +2492,6 @@ const renderRestrictionRulesPage = () => {
   renderRestrictionRulesSummary();
   renderRestrictionRulesRows();
   renderRestrictionRulesDetail();
-};
-
-const getFilteredPpcRules = () => filterRules(ppcPageData, ppcState);
-
-const renderPpcSummary = () => renderRulesSummary(ppcPageData, ppcSummary);
-
-const updatePpcSelection = () => updateRulesSelection(getFilteredPpcRules(), ppcState, ppcSelectAll);
-
-const renderPpcRows = () => renderRulesRows({
-  pageData: ppcPageData,
-  rulesState: ppcState,
-  rows: ppcRows,
-  resultCount: ppcResultCount,
-  selectAll: ppcSelectAll,
-  prefix: 'ppc',
-  emptyLabel: 'No PPC rules found',
-});
-
-const renderPpcDetail = () => renderRulesDetail({
-  pageData: ppcPageData,
-  rulesState: ppcState,
-  detailTarget: ppcDetail,
-  pageTarget: ppcPage,
-  prefix: 'ppc',
-  variant: 'ppc',
-});
-
-const renderPpcPage = () => {
-  if (!ppcPage) return;
-  renderPpcSummary();
-  renderPpcRows();
-  renderPpcDetail();
 };
 
 const renderFinanceSummary = () => {
@@ -3666,7 +3808,6 @@ const renderPage = () => {
   const isCouponAttributionPage = state.activeNavigationChild === 'coupon-attribution';
   const isCommissionRulesPage = state.activeNavigationChild === 'commission-rules-list';
   const isRestrictionRulesPage = state.activeNavigationChild === 'restriction-rules';
-  const isPpcPage = state.activeNavigationChild === 'ppc';
   const isFinancePage = state.activeNavigationChild === 'balance-payments';
   const isTransactionHistoryPage = ['transaction-history', 'finance-transactions'].includes(state.activeNavigationChild);
   const isInvoicesPage = state.activeNavigationChild === 'invoices';
@@ -3678,14 +3819,13 @@ const renderPage = () => {
   const isMessagesPage = ['all-messages', 'partner-messages', 'system-alerts', 'archived-messages'].includes(state.activeNavigationChild);
   const isCouponsPage = state.activeNavigationChild === 'coupons';
   const isProductsAssetsPage = state.activeNavigationChild === 'banners-images';
-  const isMainPage = isCampaignPage || isAttributionPage || isCouponAttributionPage || isCommissionRulesPage || isRestrictionRulesPage || isPpcPage || isFinancePage || isTransactionHistoryPage || isInvoicesPage || isHelpCenterPage || isTeamAccountsPage || isRecruitmentSettingsPage || isBrandIntegrationPage || isApiCredentialsPage || isMessagesPage || isCouponsPage || isProductsAssetsPage || Boolean(targetPage);
+  const isMainPage = isCampaignPage || isAttributionPage || isCouponAttributionPage || isCommissionRulesPage || isRestrictionRulesPage || isFinancePage || isTransactionHistoryPage || isInvoicesPage || isHelpCenterPage || isTeamAccountsPage || isRecruitmentSettingsPage || isBrandIntegrationPage || isApiCredentialsPage || isMessagesPage || isCouponsPage || isProductsAssetsPage || Boolean(targetPage);
 
   document.body.classList.toggle('is-campaign-page', isCampaignPage);
   document.body.classList.toggle('is-attribution-page', isAttributionPage);
   document.body.classList.toggle('is-coupon-attribution-page', isCouponAttributionPage);
   document.body.classList.toggle('is-commission-rules-page', isCommissionRulesPage);
   document.body.classList.toggle('is-restriction-rules-page', isRestrictionRulesPage);
-  document.body.classList.toggle('is-ppc-page', isPpcPage);
   document.body.classList.toggle('is-finance-page', isFinancePage);
   document.body.classList.toggle('is-transaction-history-page', isTransactionHistoryPage);
   document.body.classList.toggle('is-invoices-page', isInvoicesPage);
@@ -3725,8 +3865,6 @@ const renderPage = () => {
           ? 'Manage base commission rates, bonuses, attribution windows, and rule conditions for your partners.'
           : isRestrictionRulesPage
             ? 'Define paid-search terms, channels, regions, and partner eligibility for your programs.'
-          : isPpcPage
-            ? 'Control PPC keywords, channels, regions, partner eligibility, and violation handling for your programs.'
           : isFinancePage
             ? 'Track your account balance, commissions, payouts, and payment methods.'
             : isTransactionHistoryPage
@@ -3750,11 +3888,11 @@ const renderPage = () => {
             : isProductsAssetsPage
               ? 'Manage your creative assets and organize them into folders for easy access and use across campaigns.'
             : targetPage?.description ?? recruitmentPage?.description ?? operationsPage?.description ?? context.current.label + ' workspace preview for the current brand scope.';
-  breadcrumbParent.textContent = isCampaignPage || isAttributionPage || isCouponAttributionPage || isCommissionRulesPage || isRestrictionRulesPage || isPpcPage || isFinancePage || isTransactionHistoryPage || isInvoicesPage || isTeamAccountsPage || isRecruitmentSettingsPage || isBrandIntegrationPage || isApiCredentialsPage || isMessagesPage || isCouponsPage || isProductsAssetsPage
-    ? (isCampaignPage ? 'Campaigns' : isAttributionPage || isCouponAttributionPage || isCommissionRulesPage || isRestrictionRulesPage || isPpcPage || isInvoicesPage ? 'Commission & Rules' : isTeamAccountsPage || isRecruitmentSettingsPage || isBrandIntegrationPage || isApiCredentialsPage ? 'Integrations & Settings' : isMessagesPage ? 'Messages & Notifications' : isCouponsPage || isProductsAssetsPage ? 'Products & Assets' : 'Finance')
+  breadcrumbParent.textContent = isCampaignPage || isAttributionPage || isCouponAttributionPage || isCommissionRulesPage || isRestrictionRulesPage || isFinancePage || isTransactionHistoryPage || isInvoicesPage || isTeamAccountsPage || isRecruitmentSettingsPage || isBrandIntegrationPage || isApiCredentialsPage || isMessagesPage || isCouponsPage || isProductsAssetsPage
+    ? (isCampaignPage ? 'Campaigns' : isAttributionPage || isCouponAttributionPage || isCommissionRulesPage || isRestrictionRulesPage || isInvoicesPage ? 'Commission & Rules' : isTeamAccountsPage || isRecruitmentSettingsPage || isBrandIntegrationPage || isApiCredentialsPage ? 'Integrations & Settings' : isMessagesPage ? 'Messages & Notifications' : isCouponsPage || isProductsAssetsPage ? 'Products & Assets' : 'Finance')
     : isHelpCenterPage ? 'Help center'
     : isOverview ? t('shell.merchantWorkspace', 'Merchant workspace') : context.parent.label;
-  breadcrumbCurrent.textContent = isCampaignPage ? 'All campaigns' : isAttributionPage ? 'Attribution rules' : isCouponAttributionPage ? 'Coupon attribution' : isCommissionRulesPage ? 'Commission rules' : isRestrictionRulesPage ? 'Restriction rules' : isPpcPage ? 'PPC' : isFinancePage ? 'Balance & payments' : isTransactionHistoryPage ? 'Transaction history' : isInvoicesPage ? 'Invoices' : isHelpCenterPage ? 'Help center' : isTeamAccountsPage ? 'Team accounts' : isRecruitmentSettingsPage ? 'Recruitment page' : isBrandIntegrationPage ? 'Brand integration' : isApiCredentialsPage ? 'API credentials' : isMessagesPage ? context.current.label : isCouponsPage ? 'Coupons' : isProductsAssetsPage ? 'Banners & images' : isOverview ? 'Overview' : context.current.label;
+  breadcrumbCurrent.textContent = isCampaignPage ? 'All campaigns' : isAttributionPage ? 'Attribution rules' : isCouponAttributionPage ? 'Coupon attribution' : isCommissionRulesPage ? 'Commission rules' : isRestrictionRulesPage ? 'Restriction rules' : isFinancePage ? 'Balance & payments' : isTransactionHistoryPage ? 'Transaction history' : isInvoicesPage ? 'Invoices' : isHelpCenterPage ? 'Help center' : isTeamAccountsPage ? 'Team accounts' : isRecruitmentSettingsPage ? 'Recruitment page' : isBrandIntegrationPage ? 'Brand integration' : isApiCredentialsPage ? 'API credentials' : isMessagesPage ? context.current.label : isCouponsPage ? 'Coupons' : isProductsAssetsPage ? 'Banners & images' : isOverview ? 'Overview' : context.current.label;
   breadcrumbCurrent.setAttribute('aria-current', 'page');
   overviewPage.hidden = !isOverview;
   modulePage.hidden = isOverview || (!recruitmentPage && !operationsPage && !targetPage);
@@ -3763,7 +3901,6 @@ const renderPage = () => {
   couponAttributionPage.hidden = !isCouponAttributionPage;
   commissionRulesPage.hidden = !isCommissionRulesPage;
   restrictionRulesPage.hidden = !isRestrictionRulesPage;
-  ppcPage.hidden = !isPpcPage;
   financePage.hidden = !isFinancePage;
   transactionHistoryPage.hidden = !isTransactionHistoryPage;
   invoicesPage.hidden = !isInvoicesPage;
@@ -3780,7 +3917,6 @@ const renderPage = () => {
   if (couponAttributionActions) couponAttributionActions.hidden = !isCouponAttributionPage;
   if (commissionRulesActions) commissionRulesActions.hidden = !isCommissionRulesPage;
   if (restrictionRulesActions) restrictionRulesActions.hidden = !isRestrictionRulesPage;
-  if (ppcActions) ppcActions.hidden = !isPpcPage;
   if (financeActions) financeActions.hidden = !isFinancePage;
   if (teamAccountsActions) teamAccountsActions.hidden = !isTeamAccountsPage;
   if (recruitmentPageSettingsActions) recruitmentPageSettingsActions.hidden = !isRecruitmentSettingsPage;
@@ -3804,7 +3940,6 @@ const renderPage = () => {
   if (isCouponAttributionPage) renderCouponAttributionPage();
   if (isCommissionRulesPage) renderCommissionRulesPage();
   if (isRestrictionRulesPage) renderRestrictionRulesPage();
-  if (isPpcPage) renderPpcPage();
   if (isFinancePage) renderFinancePage();
   if (isTransactionHistoryPage) renderTransactionHistoryPage();
   if (isInvoicesPage) renderInvoicesPage();
@@ -3818,17 +3953,21 @@ const renderPage = () => {
   if (isProductsAssetsPage) renderProductsAssetsPage();
 };
 
-const renderAll = () => {
-  renderNavigation();
+const renderOverviewData = ({ animate = true } = {}) => {
   renderPeriods();
-  renderMetrics();
-  renderOverviewChart();
+  renderMetrics({ animate });
+  renderOverviewChart({ animate });
   renderPartnerPerformance();
   renderCommissionSummary();
   renderPartnerStatus();
   renderActionCenter();
   renderQuickActions();
   renderDemoStateBanner();
+};
+
+const renderAll = ({ animate = true } = {}) => {
+  renderNavigation();
+  renderOverviewData({ animate });
   renderPage();
   renderUtilityNavigationState();
   renderHeaderUtility();
@@ -3889,11 +4028,6 @@ headerPopover?.addEventListener('click', (event) => {
   headerActionState = closeHeaderActionPanel(headerActionState);
   renderHeaderUtility();
 });
-
-const closePeriodMenu = () => {
-  periodMenu.hidden = true;
-  periodToggle.setAttribute('aria-expanded', 'false');
-};
 
 const navigateTo = (navigationId) => {
   const context = findNavigationContext(navigationId);
@@ -4063,7 +4197,7 @@ const openRecruitmentDrawer = (record, trigger, variant = 'profile') => {
         <button class="icon-button" type="button" data-drawer-close aria-label="Close partner details">${icon('x')}</button>
       </div>
       <form class="recruitment-drawer-form" data-recruitment-${isMessage ? 'message' : 'invite'}-form data-record-id="${escapeHtml(record.id)}">
-        <label><span>${isMessage ? 'Subject' : 'Partner email'}</span><input name="${isMessage ? 'subject' : 'email'}" type="${isMessage ? 'text' : 'email'}" value="${isMessage ? 'Partnership opportunity from YeahPromos' : escapeHtml(record.email ?? '')}" required /></label>
+        <label><span>${isMessage ? 'Subject' : 'Partner email'}</span><input name="${isMessage ? 'subject' : 'email'}" type="${isMessage ? 'text' : 'email'}" value="${isMessage ? escapeHtml(translateText(locale, 'Partnership opportunity from YeahPromos')) : escapeHtml(record.email ?? '')}" required /></label>
         <label><span>${isMessage ? 'Message' : 'Personal note'}</span><textarea name="${isMessage ? 'message' : 'note'}" rows="5" placeholder="${isMessage ? 'Write a clear next step for this partner.' : 'Add context to make the invitation feel personal.'}" required></textarea></label>
         <div class="drawer-actions">
           <button class="button button--secondary" type="button" data-drawer-close>Cancel</button>
@@ -4772,21 +4906,106 @@ modulePage.addEventListener('keydown', (event) => {
 });
 
 
-periodToggle.addEventListener('click', (event) => {
-  event.stopPropagation();
-  const nextOpenState = periodMenu.hidden;
-  periodMenu.hidden = !nextOpenState;
-  periodToggle.setAttribute('aria-expanded', String(nextOpenState));
+const handlePeriodDateChange = () => {
+  window.clearTimeout(periodChangeTimer);
+  const startDate = getPeriodInputDate(periodStartInput);
+  const endDate = getPeriodInputDate(periodEndInput);
+  if (!startDate || !endDate) return;
+  if (startDate > endDate) {
+    showToast(translateText(getLocale(), 'Start date must be on or before end date'));
+    return;
+  }
+
+  if (startDate === state.selectedStartDate && endDate === state.selectedEndDate) return;
+
+  periodChangeTimer = window.setTimeout(() => {
+    if (startDate === state.selectedStartDate && endDate === state.selectedEndDate) return;
+
+    state = selectDateRange(state, startDate, endDate);
+    renderOverviewData({ animate: false });
+    showToast(translateText(getLocale(), 'Date range updated'));
+  }, 0);
+};
+
+periodStartInput?.addEventListener('click', () => openPeriodPicker('start'));
+periodEndInput?.addEventListener('click', () => openPeriodPicker('end'));
+periodStartInput?.addEventListener('keydown', (event) => handlePeriodPickerKeydown(event, 'start'));
+periodEndInput?.addEventListener('keydown', (event) => handlePeriodPickerKeydown(event, 'end'));
+document.querySelectorAll('[data-period-trigger]').forEach((trigger) => {
+  trigger.addEventListener('click', () => openPeriodPicker(trigger.dataset.periodTrigger));
 });
+periodPopover?.addEventListener('click', (event) => {
+  event.stopPropagation();
 
-periodMenu.addEventListener('click', (event) => {
-  const option = event.target.closest('[data-period]');
-  if (!option) return;
+  const viewToggle = event.target.closest('[data-period-calendar-view]');
+  if (viewToggle) {
+    const nextView = viewToggle.dataset.periodCalendarView;
+    periodPickerState.selectionView = periodPickerState.selectionView === nextView ? 'calendar' : nextView;
+    renderPeriodPicker();
+    return;
+  }
 
-  state = selectPeriod(state, option.dataset.period);
-  renderAll();
-  closePeriodMenu();
-  showToast(`Date range updated to ${option.textContent.trim().replace(/\s+/g, ' ')}`);
+  const navigation = event.target.closest('[data-period-calendar-nav]');
+  if (navigation) {
+    const currentViewDate = periodPickerState.viewDate ?? new Date();
+    periodPickerState.viewDate = new Date(Date.UTC(
+      currentViewDate.getUTCFullYear(),
+      currentViewDate.getUTCMonth() + Number(navigation.dataset.periodCalendarNav),
+      1,
+    ));
+    renderPeriodPicker();
+    return;
+  }
+
+  const yearNavigation = event.target.closest('[data-period-calendar-year-nav]');
+  if (yearNavigation) {
+    const currentViewDate = periodPickerState.viewDate ?? new Date();
+    const step = Number(yearNavigation.dataset.periodCalendarYearNav);
+    const yearOffset = periodPickerState.selectionView === 'years' ? step * 12 : step;
+    periodPickerState.viewDate = new Date(Date.UTC(
+      currentViewDate.getUTCFullYear() + yearOffset,
+      currentViewDate.getUTCMonth(),
+      1,
+    ));
+    renderPeriodPicker();
+    return;
+  }
+
+  const monthOption = event.target.closest('[data-period-calendar-month-option]');
+  if (monthOption) {
+    const currentViewDate = periodPickerState.viewDate ?? new Date();
+    periodPickerState.viewDate = new Date(Date.UTC(
+      currentViewDate.getUTCFullYear(),
+      Number(monthOption.dataset.periodCalendarMonthOption),
+      1,
+    ));
+    periodPickerState.selectionView = 'calendar';
+    renderPeriodPicker();
+    return;
+  }
+
+  const yearOption = event.target.closest('[data-period-calendar-year-option]');
+  if (yearOption) {
+    const currentViewDate = periodPickerState.viewDate ?? new Date();
+    periodPickerState.viewDate = new Date(Date.UTC(
+      Number(yearOption.dataset.periodCalendarYearOption),
+      currentViewDate.getUTCMonth(),
+      1,
+    ));
+    periodPickerState.selectionView = 'months';
+    renderPeriodPicker();
+    return;
+  }
+
+  const day = event.target.closest('[data-period-calendar-day]');
+  if (day) {
+    commitPeriodPickerValue(day.dataset.periodCalendarDay);
+    return;
+  }
+
+  const action = event.target.closest('[data-period-calendar-action]');
+  if (action?.dataset.periodCalendarAction === 'today') commitPeriodPickerValue(getPeriodTodayValue());
+  if (action?.dataset.periodCalendarAction === 'clear') commitPeriodPickerValue('');
 });
 
 demoStateSelect.addEventListener('change', (event) => {
@@ -5008,17 +5227,6 @@ bindRulesPage({
   renderDetail: renderRestrictionRulesDetail,
   updateSelection: updateRestrictionRulesSelection,
   pageLabel: 'Restriction rules',
-});
-
-bindRulesPage({
-  page: ppcPage,
-  rulesState: ppcState,
-  prefix: 'ppc',
-  getFiltered: getFilteredPpcRules,
-  renderRows: renderPpcRows,
-  renderDetail: renderPpcDetail,
-  updateSelection: updatePpcSelection,
-  pageLabel: 'PPC',
 });
 
 if (financePage) {
@@ -5784,7 +5992,7 @@ if (couponAttributionPage) {
 }
 
 document.addEventListener('click', (event) => {
-  if (!event.target.closest('.period-picker')) closePeriodMenu();
+  if (!periodPicker?.contains(event.target)) closePeriodPicker();
   if (!pageHeaderUtility?.contains(event.target) && headerActionState.openPanel) {
     headerActionState = closeHeaderActionPanel(headerActionState);
     renderHeaderUtility();
@@ -5837,13 +6045,6 @@ document.addEventListener('click', (event) => {
   if (restrictionRulesAction && !restrictionRulesPage?.contains(restrictionRulesAction)) {
     const action = restrictionRulesAction.dataset.restrictionRulesAction;
     if (action === 'create') showToast('Restriction rule editor is ready for product integration');
-    return;
-  }
-
-  const ppcAction = event.target.closest('[data-ppc-action]');
-  if (ppcAction && !ppcPage?.contains(ppcAction)) {
-    const action = ppcAction.dataset.ppcAction;
-    if (action === 'create') showToast('PPC rule editor is ready for product integration');
     return;
   }
 
@@ -5926,6 +6127,7 @@ document.addEventListener('pointerdown', (event) => {
   const target = event.target instanceof Element
     ? event.target.closest('button, a, [role="button"]')
     : null;
+  if (target?.matches('[data-no-interaction-pulse]')) return;
   triggerInteractionPulse(target);
 });
 
@@ -5944,6 +6146,11 @@ document.addEventListener('keydown', (event) => {
 
   if (event.key !== 'Escape') return;
 
+  if (periodPopover && !periodPopover.hidden) {
+    closePeriodPicker();
+    return;
+  }
+
   if (headerActionState.openPanel) {
     headerActionState = closeHeaderActionPanel(headerActionState);
     renderHeaderUtility();
@@ -5960,7 +6167,6 @@ document.addEventListener('keydown', (event) => {
     return;
   }
 
-  closePeriodMenu();
 });
 
 window.addEventListener('resize', () => {
